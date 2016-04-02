@@ -43,20 +43,14 @@ void Dungeon::removeLevel(std::size_t index)
 	levels.erase(levels.begin() + index);
 }
 
-void Dungeon::moveLevel(std::size_t source, std::size_t destination)
+void Dungeon::swapLevels(std::size_t indexA, std::size_t indexB)
 {
-	if (source == destination || source >= levels.size() || destination >= levels.size())
+	if (indexA == indexB || indexA >= levels.size() || indexB >= levels.size())
 	{
 		return;
 	}
-	else if (source < destination)
-	{
-		std::rotate(levels.begin() + source, levels.begin() + source + 1, levels.begin() + destination);
-	}
-	else
-	{
-		std::rotate(levels.begin() + source, levels.begin() + destination - 1, levels.begin() + destination);
-	}
+	
+	std::swap(levels[indexA], levels[indexB]);
 }
 
 std::size_t Dungeon::getLevelCount() const

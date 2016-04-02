@@ -41,11 +41,13 @@ public:
 	void removeLevel(std::size_t index);
 
 	/**
-	 * Moves the level at position "source" to position "destination", shifting all levels in-between.
+	 * Swaps the levels at the two specified indices without altering the levels in-between.
 	 * 
 	 * Does nothing if either argument is out of range.
+	 * 
+	 * All pointers remain valid.
 	 */
-	void moveLevel(std::size_t source, std::size_t destination);
+	void swapLevels(std::size_t indexA, std::size_t indexB);
 
 	/**
 	 * Returns the number of levels in the dungeon.
