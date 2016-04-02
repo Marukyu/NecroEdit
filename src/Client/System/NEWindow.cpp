@@ -3,6 +3,7 @@
 #include <Client/GUI2/Application.hpp>
 #include <Client/GUI2/Container.hpp>
 #include <Client/GUI2/Interface.hpp>
+#include <Client/GUI2/Panels/BorderPanel.hpp>
 #include <Client/GUI2/Widgets/Gradient.hpp>
 #include <Client/GUI2/Widgets/Separator.hpp>
 #include <Client/LevelRenderer/ObjectAppearance.hpp>
@@ -148,9 +149,14 @@ void NEWindow::initTools()
 void NEWindow::initPanels()
 {
 	mainPanel = gui2::BorderPanel::make();
+
 	mainPanel->setResizable(gui2::BorderPanel::Left, true);
 	mainPanel->setMinimumSize(gui2::BorderPanel::Left, 45.f);
 	mainPanel->setMaximumSize(gui2::BorderPanel::Left, 600.f);
+
+	mainPanel->setResizable(gui2::BorderPanel::Right, true);
+	mainPanel->setMinimumSize(gui2::BorderPanel::Right, 45.f);
+	mainPanel->setMaximumSize(gui2::BorderPanel::Right, 600.f);
 
 	auto mainFiller = gui2::GridPanel::make();
 	mainFiller->add(gui2::Gradient::make(sf::Color(0, 0, 0), sf::Color(0, 0, 0)));
@@ -160,6 +166,10 @@ void NEWindow::initPanels()
 	toolPanelContainer = gui2::GridPanel::make();
 	toolPanelContainer->add(gui2::Gradient::make(sf::Color(24, 24, 24, 200), sf::Color(32, 32, 32, 200)));
 	mainPanel->add(toolPanelContainer, gui2::BorderPanel::Left, 200);
+
+	levelPanel = LevelPanel::make();
+	levelPanel->setDungeon(dungeon.get());
+	mainPanel->add(levelPanel, gui2::BorderPanel::Right, 150);
 }
 
 void NEWindow::initToolbar()
@@ -239,6 +249,8 @@ void NEWindow::initEditor()
 void NEWindow::initLevel()
 {
 	dungeon->insertLevel(0);
+	levelPanel->updateDungeon();
+	levelPanel->setSelectedLevel(0);
 	switchToLevel(&dungeon->getLevel(0));
 }
 
@@ -285,7 +297,7 @@ void NEWindow::onProcessWindow(const gui2::WidgetEvents& events)
 			setToolByName(toolButtons[i].actionName);
 		}
 	}
-	
+
 	for (std::size_t i = 0; i < actionButtons.size(); ++i)
 	{
 		if (actionButtons[i].button->isClicked())
@@ -309,6 +321,11 @@ void NEWindow::onProcessWindow(const gui2::WidgetEvents& events)
 		}
 	}
 
+	if (levelPanel->wasChanged() && levelPanel->hasSelectedLevel())
+	{
+		switchToLevel(&dungeon->getLevel(levelPanel->getSelectedLevel()));
+	}
+
 	if (openDialog.isDone())
 	{
 		switchToLevel(nullptr);
@@ -324,9 +341,13 @@ void NEWindow::onProcessWindow(const gui2::WidgetEvents& events)
 		// Select first non-boss level to show in editor.
 		for (std::size_t levelID = 0; levelID < dungeon->getLevelCount(); ++levelID)
 		{
-			if (!dungeon->getLevel(levelID).isBoss())
+			Level & level = dungeon->getLevel(levelID);
+
+			if (!level.isBoss())
 			{
-				switchToLevel(&dungeon->getLevel(levelID));
+				levelPanel->updateDungeon();
+				levelPanel->setSelectedLevel(levelID);
+				switchToLevel(&level);
 			}
 		}
 

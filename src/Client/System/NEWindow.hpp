@@ -2,10 +2,9 @@
 #define NE_WINDOW_HPP
 
 #include <Client/Editor/Editor.hpp>
-#include <Client/Editor/SelectionPanel.hpp>
+#include <Client/Editor/LevelPanel.hpp>
 #include <Client/Editor/Tool.hpp>
 #include <Client/GUI2/GUI.hpp>
-#include <Client/GUI2/Panels/BorderPanel.hpp>
 #include <Client/GUI2/Panels/GridPanel.hpp>
 #include <Client/GUI2/Widgets/Button.hpp>
 #include <Client/GUI2/Widgets/Window.hpp>
@@ -85,6 +84,8 @@ private:
 	std::vector<ToolbarButton> toolButtons;
 
 	gui2::Ptr<gui2::GridPanel> toolPanelContainer;
+	
+	gui2::Ptr<LevelPanel> levelPanel;
 
 	gui2::Ptr<Editor> editor;
 
