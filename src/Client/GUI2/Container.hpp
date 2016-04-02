@@ -182,6 +182,10 @@ protected:
 	// called whenever the container's parent is changed.
 	virtual void onParent(std::shared_ptr<Container> oldParent);
 
+	// called on resize, updates all widget vertices and notifies for container
+	// box change.
+	virtual void onResize();
+
 private:
 
 	// invoked when add() is called.
@@ -212,10 +216,6 @@ private:
 	virtual void onMouseAway();
 	virtual void onMouseDown(sf::Vector2f pos, Input button);
 	virtual void onMouseUp(sf::Vector2f pos, Input button);
-
-	// called on resize, updates all widget vertices and notifies for container
-	// box change.
-	virtual void onResize();
 
 	// processes this widget. subclasses should override onProcessContainer().
 	void onProcess(const WidgetEvents & events);

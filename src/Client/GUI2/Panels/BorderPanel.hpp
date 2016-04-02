@@ -51,6 +51,7 @@ public:
 protected:
 
 	virtual void init();
+	virtual void onResize();
 
 private:
 
@@ -88,7 +89,6 @@ private:
 	void updateResizeHandle(Orientation side);
 
 	void onUpdatePanel();
-	void onResize();
 	void onAdd(std::shared_ptr<Widget> widget);
 	void onRemove(std::shared_ptr<Widget> widget);
 	void onNotify(Observable & subject, int message);

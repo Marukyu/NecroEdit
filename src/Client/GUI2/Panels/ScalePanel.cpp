@@ -32,6 +32,8 @@ void ScalePanel::onUpdatePanel()
 
 void ScalePanel::onResize()
 {
+	Container::onResize();
+	
 	onUpdatePanel();
 }
 

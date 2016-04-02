@@ -179,6 +179,8 @@ bool GridPanel::overrideAutoSize() const
 
 void GridPanel::onResize()
 {
+	Container::onResize();
+	
 	for (auto it = myPlacements.begin(); it != myPlacements.end(); ++it)
 	{
 		update(it->first.lock());

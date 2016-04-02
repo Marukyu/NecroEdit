@@ -491,6 +491,8 @@ void BorderPanel::onUpdatePanel()
 
 void BorderPanel::onResize()
 {
+	Container::onResize();
+	
 	onUpdatePanel();
 }
 

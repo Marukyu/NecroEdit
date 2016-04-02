@@ -41,6 +41,7 @@ public:
 protected:
 
 	virtual void init();
+	virtual void onResize();
 
 private:
 
@@ -52,7 +53,6 @@ private:
 
 	bool overrideAutoSize() const;
 	void onUpdatePanel();
-	void onResize();
 
 	void onAdd(Ptr<Widget> widget);
 	void onRemove(Ptr<Widget> widget);

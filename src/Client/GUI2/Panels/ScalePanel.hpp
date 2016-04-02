@@ -19,11 +19,11 @@ public:
 protected:
 
 	virtual void init();
+	virtual void onResize();
 
 private:
 
 	void onUpdatePanel();
-	void onResize();
 	void update(Widget * widget);
 
 	void onAdd(std::shared_ptr<Widget> widget);
