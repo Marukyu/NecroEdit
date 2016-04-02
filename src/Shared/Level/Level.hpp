@@ -160,6 +160,11 @@ public:
 
 	Level();
 	~Level();
+	
+	/**
+	 * Copies the settings, contents and tiles from another level to this one.
+	 */
+	void assign(const Level & level);
 
 	/**
 	 * Changes the tile at the specified position.

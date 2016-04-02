@@ -18,6 +18,30 @@ Level::~Level()
 {
 }
 
+void Level::assign(const Level& level)
+{
+	boss = level.boss;
+	music = level.music;
+	sections = level.sections;
+	
+	objects.clear();
+	objects.reserve(level.objects.size());
+	
+	for (Object::ID objectID = 0; objectID < level.objects.size(); ++objectID)
+	{
+		if (level.objects[objectID] == nullptr)
+		{
+			objects.push_back(nullptr);
+		}
+		else
+		{
+			objects.push_back(makeUnique<Object>(*level.objects[objectID]));
+			objects[objectID]->setID(objectID);
+			objects[objectID]->setObserver(&objectObserver);
+		}
+	}
+}
+
 void Level::setTileAt(sf::Vector2i position, Tile tile)
 {
 	Section & section = sections[positionToSection(position)];
