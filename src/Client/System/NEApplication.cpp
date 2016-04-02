@@ -186,7 +186,7 @@ void NEApplication::printUsage(const std::string & exeName)
 {
 	std::cout << "Usage: " << exeName << " [Options] [Dungeon File]" << std::endl;
 	std::cout << "Options:" << std::endl;
-	std::cout << "-g / --game-directory [dir]: Specify [dir] as containing the game's exeuctable and resource files"
+	std::cout << "-g / --game-directory [dir]: Specify [dir] as containing the game's executable and resource files"
 			<< std::endl;
 	std::cout << "-r / --resource-directory [dir]: Specify [dir] as containing the editor's resource files"
 			<< std::endl;
