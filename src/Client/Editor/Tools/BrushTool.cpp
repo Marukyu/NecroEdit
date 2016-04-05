@@ -1,4 +1,5 @@
 #include <Client/Editor/Tools/BrushTool.hpp>
+#include <Client/LevelRenderer/ObjectAppearance.hpp>
 #include <Client/LevelRenderer/TileAppearance.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
@@ -100,19 +101,43 @@ void BrushTool::onDrawPreview(sf::RenderTarget& target, sf::RenderStates states,
 
 	previewVertices.clear();
 
-	auto tilePreviewVertices = getEditorData().tileAppearance->getTileVertices(getPrimaryBrush().getTile(), cursorPosition);
+	const Brush & primaryBrush = getPrimaryBrush();
 
-	for (sf::Vertex & vertex : tilePreviewVertices)
+	if (primaryBrush.getTileMode() != Brush::TileMode::Ignore)
 	{
-		vertex.color.a *= 0.75f;
-		previewVertices.push_back(std::move(vertex));
+		auto tilePreviewVertices = getEditorData().tileAppearance->getTileVertices(primaryBrush.getTile(),
+			cursorPosition);
+
+		for (sf::Vertex & vertex : tilePreviewVertices)
+		{
+			// Make preview translucent.
+			vertex.color.a *= 0.75f;
+
+			// Add vertex to list.
+			previewVertices.push_back(std::move(vertex));
+		}
 	}
 
-	sf::FloatRect tilePreviewRect((cursorPosition.x - 0.5f) * TileAppearanceManager::TILE_SIZE,
+	if (primaryBrush.getObjectMode() != Brush::ObjectMode::Ignore)
+	{
+		auto objectPreviewVertices = getEditorData().objectAppearance->getObjectVertices(primaryBrush.getObject());
+
+		for (sf::Vertex & vertex : objectPreviewVertices)
+		{
+			// Offset object position (at origin) by cursor location.
+			vertex.position += sf::Vector2f(cursorPosition) * TileAppearanceManager::TILE_SIZE;
+
+			// Make preview translucent.
+			vertex.color.a *= 0.75f;
+
+			// Add vertex to list.
+			previewVertices.push_back(std::move(vertex));
+		}
+	}
+
+	sf::FloatRect previewRect((cursorPosition.x - 0.5f) * TileAppearanceManager::TILE_SIZE,
 		(cursorPosition.y - 0.5f) * TileAppearanceManager::TILE_SIZE, TileAppearanceManager::TILE_SIZE,
 		TileAppearanceManager::TILE_SIZE);
-
-	sf::FloatRect previewRect = tilePreviewRect;
 
 	previewRectangle.setPosition(previewRect.left, previewRect.top);
 	previewRectangle.setSize(sf::Vector2f(previewRect.width, previewRect.height));
