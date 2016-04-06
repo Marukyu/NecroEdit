@@ -7,14 +7,15 @@
 
 #include <Client/Graphics/Packing/TexturePacker.hpp>
 #include <Client/LevelRenderer/ObjectAppearance.hpp>
-#include <Shared/External/PugiXML/pugixml.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <Shared/External/PugiXML/pugixml.hpp>
 #include <Shared/Utils/MakeUnique.hpp>
 #include <Shared/Utils/Utilities.hpp>
 #include <algorithm>
+#include <cmath>
 #include <memory>
 #include <utility>
 
@@ -357,11 +358,25 @@ std::vector<sf::Vertex> ObjectAppearanceManager::getObjectVertices(const Object&
 	// Create vertex and texture rectangles.
 	sf::IntRect texRect = myPacker->getImageRect(nodeID);
 	sf::FloatRect vertRect(offset.x, offset.y, texRect.width * scale.x, texRect.height * scale.y);
-	vertRect.left -= vertRect.width / 2.f;
-	vertRect.top -= vertRect.height;
+	
+	// Apply generic horizontal offset correction.
+	if (object.getType() != Object::Type::Enemy)
+	{
+		vertRect.left += std::floor((TILE_SIZE - vertRect.width) / 2.f);
+	}
+
+	// Apply type-specific vertical offset corrections.
+	if (object.getType() == Object::Type::Trap)
+	{
+		vertRect.top += TILE_SIZE / 2.f;
+	}
+	else if (object.getType() == Object::Type::Shrine)
+	{
+		vertRect.top -= 20.f;
+	}
 
 	// Base vertex position.
-	sf::Vector2f vp(object.getPosition().x * TILE_SIZE, object.getPosition().y * TILE_SIZE);
+	sf::Vector2f vp((sf::Vector2f(object.getPosition()) - sf::Vector2f(0.5f, 1.f)) * TILE_SIZE);
 
 	// Vertex corners.
 	sf::Vector2f tl(vertRect.left, vertRect.top);
