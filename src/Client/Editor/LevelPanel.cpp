@@ -7,7 +7,8 @@
 #include <memory>
 #include <string>
 
-static constexpr float LEVEL_LIST_ENTRY_HEIGHT = 30.f;
+static constexpr float LEVEL_LIST_ENTRY_HEIGHT = 20.f;
+static constexpr float SLIDER_WIDTH = 16.f;
 
 gui2::Ptr<LevelPanel> LevelPanel::make()
 {
@@ -20,7 +21,8 @@ LevelPanel::LevelPanel() :
 		dungeon(nullptr),
 		isAnyLevelSelected(false),
 		selectedLevel(0),
-		wasLevelChanged(false)
+		wasLevelChanged(false),
+		scrollVelocity(0.f)
 {
 }
 
@@ -31,6 +33,8 @@ void LevelPanel::init()
 	auto mainPanel = gui2::BorderPanel::make();
 
 	levelListContainer = gui2::Container::make();
+	levelListInnerContainer = gui2::Container::make();
+	levelListContainer->add(levelListInnerContainer);
 
 	// TODO: change placeholder button texts to proper symbols.
 	buttonAddLevel = gui2::Button::make("+");
@@ -38,6 +42,9 @@ void LevelPanel::init()
 	buttonDuplicateLevel = gui2::Button::make("x2");
 	buttonMoveLevelUp = gui2::Button::make("/\\");
 	buttonMoveLevelDown = gui2::Button::make("\\/");
+
+	levelListSlider = gui2::Slider::make();
+	levelListSlider->setVertical(true);
 
 	auto levelButtonGrid = gui2::GridPanel::make(5, 1);
 	levelButtonGrid->add(buttonAddLevel);
@@ -47,6 +54,7 @@ void LevelPanel::init()
 	levelButtonGrid->add(buttonMoveLevelDown);
 
 	mainPanel->add(levelListContainer, gui2::BorderPanel::Center);
+	mainPanel->add(levelListSlider, gui2::BorderPanel::Right, SLIDER_WIDTH);
 	mainPanel->add(levelButtonGrid, gui2::BorderPanel::Bottom, 30);
 	mainPanel->add(gui2::Gradient::make(sf::Color(24, 24, 24, 200), sf::Color(32, 32, 32, 200)),
 		gui2::BorderPanel::Center);
@@ -108,18 +116,22 @@ void LevelPanel::updateDungeon()
 	{
 		std::size_t levelID = levelListEntries.size();
 		levelListEntries.push_back(gui2::Text::make(" Level " + cNtoS(levelID + 1)));
-		levelListContainer->add(levelListEntries.back());
+		levelListInnerContainer->add(levelListEntries.back());
 		updateLevelListEntryRect(levelID);
 		setLevelListEntryColor(levelID, false);
 	}
 
 	while (levelListEntries.size() > dungeon->getLevelCount())
 	{
-		levelListContainer->remove(levelListEntries.back());
+		levelListInnerContainer->remove(levelListEntries.back());
 		levelListEntries.pop_back();
 	}
 
+	levelListInnerContainer->setSize(levelListInnerContainer->getSize().x,
+		levelListEntries.size() * LEVEL_LIST_ENTRY_HEIGHT);
+
 	updateLevelButtons();
+	updateSlider();
 }
 
 bool LevelPanel::wasChanged()
@@ -136,6 +148,8 @@ void LevelPanel::selectLevel(std::size_t level)
 {
 	setSelectedLevel(level);
 	wasLevelChanged = true;
+
+	// TODO: Scroll to selected level if it is out of view.
 }
 
 void LevelPanel::deselectLevel()
@@ -165,7 +179,8 @@ void LevelPanel::updateLevelListEntryRect(std::size_t level)
 {
 	if (level < levelListEntries.size())
 	{
-		levelListEntries[level]->setRect(0, level * LEVEL_LIST_ENTRY_HEIGHT, getSize().x, LEVEL_LIST_ENTRY_HEIGHT);
+		levelListEntries[level]->setRect(0, level * LEVEL_LIST_ENTRY_HEIGHT, getSize().x - SLIDER_WIDTH,
+			LEVEL_LIST_ENTRY_HEIGHT);
 	}
 }
 
@@ -176,6 +191,21 @@ void LevelPanel::onResize()
 	for (std::size_t level = 0; level < levelListEntries.size(); ++level)
 	{
 		updateLevelListEntryRect(level);
+	}
+}
+
+void LevelPanel::updateSlider()
+{
+	float sliderMax = levelListInnerContainer->getSize().y - levelListContainer->getSize().y;
+
+	if (sliderMax > 0.f)
+	{
+		levelListSlider->setEnabled(true);
+		levelListSlider->setBounds(0, sliderMax);
+	}
+	else
+	{
+		levelListSlider->setEnabled(false);
 	}
 }
 
@@ -190,6 +220,36 @@ void LevelPanel::onProcessContainer(gui2::WidgetEvents& events)
 			selectLevel(i);
 		}
 	}
+
+	updateSlider();
+
+	if (levelListSlider->isEnabled())
+	{
+		if ((levelListContainer->isMouseOver() || levelListSlider->isMouseOver()) && events.mouseWheelDelta != 0)
+		{
+			scrollVelocity -= events.mouseWheelDelta * 5;
+		}
+
+		if (std::abs(scrollVelocity) > 0.0001f)
+		{
+			float newSliderValue = levelListSlider->getValue() + scrollVelocity;
+			if (newSliderValue > levelListSlider->getMax())
+			{
+				newSliderValue = levelListSlider->getMax();
+				scrollVelocity = 0.f;
+			}
+			else if (newSliderValue < levelListSlider->getMin())
+			{
+				newSliderValue = levelListSlider->getMin();
+				scrollVelocity = 0.f;
+			}
+			levelListSlider->setValue(newSliderValue);
+			scrollVelocity *= 0.75f;
+		}
+	}
+
+	levelListInnerContainer->setPosition(0.f, -levelListSlider->getValue());
+	levelListInnerContainer->setSize(levelListContainer->getSize().x, levelListInnerContainer->getSize().y);
 
 	if (dungeon != nullptr)
 	{

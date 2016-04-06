@@ -46,13 +46,14 @@ protected:
 	virtual void init() override;
 
 private:
-	
+
 	void selectLevel(std::size_t level);
 	void deselectLevel();
 	void setLevelListEntryColor(std::size_t level, bool highlight);
 	void updateLevelListEntryRect(std::size_t level);
 	void updateLevelButtons();
-	
+	void updateSlider();
+
 	void onResize();
 
 	void onProcessContainer(gui2::WidgetEvents & events) override;
@@ -63,8 +64,11 @@ private:
 	bool wasLevelChanged;
 
 	gui2::Ptr<gui2::Container> levelListContainer;
+	gui2::Ptr<gui2::Container> levelListInnerContainer;
 	std::vector<gui2::Ptr<gui2::Text>> levelListEntries;
+
 	gui2::Ptr<gui2::Slider> levelListSlider;
+	float scrollVelocity;
 
 	gui2::Ptr<gui2::Button> buttonAddLevel;
 	gui2::Ptr<gui2::Button> buttonRemoveLevel;
