@@ -32,6 +32,7 @@ void LevelPanel::init()
 
 	levelListContainer = gui2::Container::make();
 
+	// TODO: change placeholder button texts to proper symbols.
 	buttonAddLevel = gui2::Button::make("+");
 	buttonRemoveLevel = gui2::Button::make("-");
 	buttonDuplicateLevel = gui2::Button::make("x2");
@@ -70,7 +71,7 @@ void LevelPanel::setSelectedLevel(std::size_t level)
 	updateLevelButtons();
 }
 
-void LevelPanel::deselectLevel()
+void LevelPanel::unsetSelectedLevel()
 {
 	if (hasSelectedLevel())
 	{
@@ -134,6 +135,12 @@ bool LevelPanel::wasChanged()
 void LevelPanel::selectLevel(std::size_t level)
 {
 	setSelectedLevel(level);
+	wasLevelChanged = true;
+}
+
+void LevelPanel::deselectLevel()
+{
+	unsetSelectedLevel();
 	wasLevelChanged = true;
 }
 
@@ -202,7 +209,15 @@ void LevelPanel::onProcessContainer(gui2::WidgetEvents& events)
 				dungeon->removeLevel(getSelectedLevel());
 
 				updateDungeon();
-				selectLevel(selectedLevel == dungeon->getLevelCount() ? selectedLevel - 1 : selectedLevel);
+
+				if (dungeon->getLevelCount() == 0)
+				{
+					deselectLevel();
+				}
+				else
+				{
+					selectLevel(selectedLevel == dungeon->getLevelCount() ? selectedLevel - 1 : selectedLevel);
+				}
 			}
 		}
 

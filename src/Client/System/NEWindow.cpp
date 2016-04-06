@@ -321,9 +321,16 @@ void NEWindow::onProcessWindow(const gui2::WidgetEvents& events)
 		}
 	}
 
-	if (levelPanel->wasChanged() && levelPanel->hasSelectedLevel())
+	if (levelPanel->wasChanged())
 	{
-		switchToLevel(&dungeon->getLevel(levelPanel->getSelectedLevel()));
+		if (levelPanel->hasSelectedLevel())
+		{
+			switchToLevel(&dungeon->getLevel(levelPanel->getSelectedLevel()));
+		}
+		else
+		{
+			switchToLevel(nullptr);
+		}
 	}
 
 	if (openDialog.isDone())

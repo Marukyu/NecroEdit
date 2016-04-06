@@ -27,7 +27,7 @@ public:
 	static gui2::Ptr<LevelPanel> make();
 
 	void setSelectedLevel(std::size_t level);
-	void deselectLevel();
+	void unsetSelectedLevel();
 
 	std::size_t getSelectedLevel() const;
 	bool hasSelectedLevel() const;
@@ -48,6 +48,7 @@ protected:
 private:
 	
 	void selectLevel(std::size_t level);
+	void deselectLevel();
 	void setLevelListEntryColor(std::size_t level, bool highlight);
 	void updateLevelListEntryRect(std::size_t level);
 	void updateLevelButtons();
