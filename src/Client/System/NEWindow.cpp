@@ -116,6 +116,7 @@ void NEWindow::initWindow()
 {
 	setCaption("NecroEdit");
 	setMaximized(true);
+	setFlags(gui2::Window::FlagMinimal);
 }
 
 void NEWindow::initResources()
