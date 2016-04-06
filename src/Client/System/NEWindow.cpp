@@ -157,7 +157,7 @@ void NEWindow::initPanels()
 
 	mainPanel->setResizable(gui2::BorderPanel::Right, true);
 	mainPanel->setMinimumSize(gui2::BorderPanel::Right, 45.f);
-	mainPanel->setMaximumSize(gui2::BorderPanel::Right, 600.f);
+	mainPanel->setMaximumSize(gui2::BorderPanel::Right, 200.f);
 
 	auto mainFiller = gui2::GridPanel::make();
 	mainFiller->add(gui2::Gradient::make(sf::Color(0, 0, 0), sf::Color(0, 0, 0)));
