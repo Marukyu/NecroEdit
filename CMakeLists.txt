@@ -58,5 +58,10 @@ if(OPENGL_FOUND)
 	target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_LIBRARIES})
 endif()
 
+# Link POSIX Thread library if necessary
+if(CMAKE_COMPILER_IS_GNUCC)
+	target_link_libraries(${EXECUTABLE_NAME} pthread)
+endif(CMAKE_COMPILER_IS_GNUCC)
+
 # Copy resource files
 file(COPY ${RESOURCES} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
