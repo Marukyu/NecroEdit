@@ -1,6 +1,20 @@
-#include "Client/GUI2/Widgets/Dropdown.hpp"
-#include "Client/GUI2/Application.hpp"
-#include "Client/GUI2/Generator.hpp"
+#include <Client/GUI2/Application.hpp>
+#include <Client/GUI2/Container.hpp>
+#include <Client/GUI2/GUI.hpp>
+#include <Client/GUI2/Widgets/Dropdown.hpp>
+#include <SFML/Graphics/Transform.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <Shared/Utils/MiscMath.hpp>
+#include <array>
+#include <cstddef>
+#include <functional>
+#include <memory>
+#include <string>
+
+namespace gui2
+{
+class WidgetEvents;
+}
 
 namespace gui2
 {
@@ -37,7 +51,7 @@ std::string Dropdown::getText() const
 
 void Dropdown::setSelection(int item)
 {
-	if (!myModel || item < 0 || item >= (int)myModel->getItemCount())
+	if (!myModel || item < 0 || item >= (int) myModel->getItemCount())
 		setText("");
 	else
 		setText(myModel->getItem(item));
@@ -45,7 +59,7 @@ void Dropdown::setSelection(int item)
 
 void Dropdown::setSelectionSilent(int item)
 {
-	if (!myModel || item < 0 || item >= (int)myModel->getItemCount())
+	if (!myModel || item < 0 || item >= (int) myModel->getItemCount())
 		setTextSilent("");
 	else
 		setTextSilent(myModel->getItem(item));
@@ -116,7 +130,6 @@ void Dropdown::init()
 
 	link(myInput);
 	link(myButton);
-	link(myMenu);
 
 	myButton->setTextFont(Application::FontSymbolSmall);
 
@@ -147,14 +160,13 @@ bool Dropdown::DropdownModel::isEnabled(std::size_t index) const
 
 bool Dropdown::DropdownModel::isChecked(std::size_t index) const
 {
-	return getCheckboxIndex() >= 0 && (int)index == getCheckboxIndex();
+	return getCheckboxIndex() >= 0 && (int) index == getCheckboxIndex();
 }
 
 bool Dropdown::DropdownModel::isSeparator(std::size_t index) const
 {
 	return myModel->isSeparator(index);
 }
-
 
 void Dropdown::DropdownModel::setCheckboxIndex(int index)
 {
@@ -169,7 +181,6 @@ int Dropdown::DropdownModel::getCheckboxIndex() const
 {
 	return myCheckboxIndex;
 }
-
 
 void Dropdown::onNotify(Observable & subject, int message)
 {
@@ -199,7 +210,52 @@ void Dropdown::onProcess(const WidgetEvents & events)
 
 	if (myButton->isClicked())
 	{
-		myMenu->show(0, isVerticalFlipped() ? 2.f : getSize().y - 2.f);
+		// Define unit lines for scale factor calculation.
+		sf::Vector2f point00(0, 0), point10(1, 0), point01(0, 1);
+
+		// Calculate initial position.
+		sf::Vector2f menuPosition(0, isVerticalFlipped() ? 2.f : getSize().y - 2.f);
+
+		// Put points into array to transform them all at once.
+		std::array<std::reference_wrapper<sf::Vector2f>, 4> pointsToTransform = { point00, point10, point01,
+				menuPosition };
+
+		// Offset local position by dropdown position.
+		menuPosition += getPosition();
+
+		// Start at dropdown menu's parent.
+		Ptr<Container> parent = getParent();
+
+		// Keep track of last valid parent to add menu to.
+		Ptr<Container> lastValidParent;
+
+		// Traverse parent hierarchy.
+		while (parent != nullptr)
+		{
+			sf::Transform transform = parent->getTransform() * parent->getContainerTransform();
+			for (sf::Vector2f & point : pointsToTransform)
+			{
+				point = transform.transformPoint(point);
+			}
+			lastValidParent = parent;
+			parent = parent->getParent();
+		}
+
+		// Calculate size from unit lines.
+		sf::Vector2f scale(vectorLength(point10 - point00), vectorLength(point01 - point00));
+
+		// Check if parent is valid.
+		if (lastValidParent)
+		{
+			// Assign scale factor to menu.
+			myMenu->setScale(scale);
+
+			// Set menu's parent to topmost container.
+			lastValidParent->add(myMenu);
+
+			// Show at final position.
+			myMenu->show(menuPosition);
+		}
 	}
 
 	if (myMenu->isClicked())
@@ -230,6 +286,5 @@ void Dropdown::updateSelection()
 
 	myDropdownModel->setCheckboxIndex(selection);
 }
-
 
 } // namespace gui2
