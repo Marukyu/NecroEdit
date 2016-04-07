@@ -7,6 +7,7 @@ namespace gui2
 Widget::Widget() :
 	myPosition(0,0),
 	mySize(0,0),
+	myScale(1,1),
 	myIsAutoManagingWidth(false),
 	myIsAutoManagingHeight(false),
 	myIsEnabled(true),
@@ -135,6 +136,25 @@ bool Widget::isAutoManagingHeight() const
 sf::Vector2f Widget::getAutomaticSize() const
 {
 	return myAutomaticSize;
+}
+
+void Widget::setScale(sf::Vector2f scale)
+{
+	if (myScale != scale)
+	{
+		myScale = scale;
+		invalidateVertices();
+	}
+}
+
+void Widget::setScale(float scaleX, float scaleY)
+{
+	setScale(sf::Vector2f(scaleX, scaleY));
+}
+
+sf::Vector2f Widget::getScale() const
+{
+	return myScale;
 }
 
 void Widget::setEnabled(bool enabled)
@@ -318,6 +338,7 @@ sf::Transform Widget::getTransform() const
 			myTransform = sf::Transform::Identity;
 
 		myTransform.translate(getPosition());
+		myTransform.scale(getScale());
 		myIsTransformInvalid = false;
 	}
 	return myTransform;

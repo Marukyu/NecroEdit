@@ -84,6 +84,14 @@ public:
 
 	/// returns the widget's automatically calculated preferred size.
 	sf::Vector2f getAutomaticSize() const;
+	
+	
+	/// sets the widget's scale factor.
+	void setScale(sf::Vector2f scale);
+	void setScale(float scaleX, float scaleY);
+
+	/// returns the widget's scale factor.
+	sf::Vector2f getScale() const;
 
 
 	/// enables/disables the widget's responsiveness to input.
@@ -374,6 +382,9 @@ private:
 
 	// widget size.
 	sf::Vector2f mySize;
+	
+	// widget scale factor.
+	sf::Vector2f myScale;
 
 	// automatic size management flags.
 	bool myIsAutoManagingWidth, myIsAutoManagingHeight;
