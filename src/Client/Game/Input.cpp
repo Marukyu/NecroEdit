@@ -185,7 +185,7 @@ std::string Input::getName() const
 			case sf::Keyboard::F15:			return "F15";
 			case sf::Keyboard::Pause:		return "Pause";
 
-#ifdef defined WOS_LINUX && defined WOS_MODIFIED_SFML
+#if defined(WOS_LINUX) && defined(WOS_MODIFIED_SFML)
 			default:
 			{
 				const char * keysymName = XKeysymToString(getCode() - SysIncr);
