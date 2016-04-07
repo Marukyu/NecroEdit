@@ -170,7 +170,7 @@ void Menu::show(sf::Vector2f pos)
 	setVisible(true);
 
 	if (isVerticalFlipped())
-		setPosition(pos.x, pos.y - getSize().y);
+		setPosition(pos.x, pos.y - getSize().y * getScale().y);
 	else
 		setPosition(pos);
 
