@@ -5,6 +5,7 @@
 #include <Client/GUI2/Panels/BorderPanel.hpp>
 #include <Client/GUI2/Panels/GridPanel.hpp>
 #include <Client/GUI2/Widgets/Button.hpp>
+#include <Client/GUI2/Widgets/Dropdown.hpp>
 #include <Client/GUI2/Widgets/Slider.hpp>
 #include <Client/GUI2/Widgets/Text.hpp>
 #include <cstddef>
@@ -75,6 +76,9 @@ private:
 	gui2::Ptr<gui2::Button> buttonDuplicateLevel;
 	gui2::Ptr<gui2::Button> buttonMoveLevelUp;
 	gui2::Ptr<gui2::Button> buttonMoveLevelDown;
+
+	gui2::Ptr<gui2::Dropdown> dropdownMusic;
+	gui2::Ptr<gui2::Dropdown> dropdownBoss;
 };
 
 #endif

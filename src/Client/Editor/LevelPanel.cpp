@@ -30,6 +30,8 @@ void LevelPanel::init()
 {
 	gui2::Container::init();
 
+	auto mainPanelContainer = gui2::GridPanel::make(1, 1);
+
 	auto mainPanel = gui2::BorderPanel::make();
 
 	levelListContainer = gui2::Container::make();
@@ -53,12 +55,34 @@ void LevelPanel::init()
 	levelButtonGrid->add(buttonMoveLevelUp);
 	levelButtonGrid->add(buttonMoveLevelDown);
 
+	auto settingsGrid = gui2::GridPanel::make(2, 2);
+
+	auto labelMusic = gui2::Text::make("Music: ");
+	labelMusic->setTextAlignment(AlignRight);
+	settingsGrid->add(labelMusic);
+
+	dropdownMusic = gui2::Dropdown::make();
+	dropdownMusic->setVerticalFlip(true);
+	settingsGrid->add(dropdownMusic);
+
+	auto labelBoss = gui2::Text::make("Boss: ");
+	labelBoss->setTextAlignment(AlignRight);
+	settingsGrid->add(labelBoss);
+
+	dropdownBoss = gui2::Dropdown::make();
+	dropdownBoss->setVerticalFlip(true);
+	settingsGrid->add(dropdownBoss);
+
 	mainPanel->add(levelListContainer, gui2::BorderPanel::Center);
 	mainPanel->add(levelListSlider, gui2::BorderPanel::Right, SLIDER_WIDTH);
+
+	mainPanel->add(settingsGrid, gui2::BorderPanel::Bottom, 48);
 	mainPanel->add(levelButtonGrid, gui2::BorderPanel::Bottom, 30);
-	mainPanel->add(gui2::Gradient::make(sf::Color(24, 24, 24, 200), sf::Color(32, 32, 32, 200)),
-		gui2::BorderPanel::Center);
-	add(mainPanel);
+
+	mainPanelContainer->add(gui2::Gradient::make(sf::Color(24, 24, 24, 200), sf::Color(32, 32, 32, 200)));
+	mainPanelContainer->add(mainPanel);
+
+	add(mainPanelContainer);
 }
 
 void LevelPanel::setSelectedLevel(std::size_t level)
