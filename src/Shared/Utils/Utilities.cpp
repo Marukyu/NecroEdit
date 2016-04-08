@@ -151,7 +151,7 @@ std::vector<std::string> extractSection(const std::vector<std::string>& vector, 
 			}
 		}
 
-		if (foundSection)
+		if (foundSection && !line.empty() && line[0] != '#')
 		{
 			section.push_back(line);
 		}

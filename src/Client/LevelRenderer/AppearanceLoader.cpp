@@ -30,12 +30,6 @@ bool AppearanceLoader::loadAppearance(const std::string& data, const std::string
 		// Initialize variant ID.
 		std::size_t variantID = 0;
 
-		// Ignore empty lines or comments.
-		if (currentLineString.empty() || currentLineString[0] == '#')
-		{
-			continue;
-		}
-
 		// Split comma-separated line data.
 		std::vector<std::string> currentLine = splitString(currentLineString, ",");
 

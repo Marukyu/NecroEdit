@@ -199,11 +199,6 @@ void NEWindow::initToolbarButtons(std::string configSection, std::vector<Toolbar
 
 	for (std::size_t i = 0; i < actions.size(); ++i)
 	{
-		if (actions[i].empty() || actions[i][0] == '#')
-		{
-			continue;
-		}
-
 		std::vector<std::string> actionData = splitString(actions[i], ",");
 
 		if (actionData.size() < 3)
