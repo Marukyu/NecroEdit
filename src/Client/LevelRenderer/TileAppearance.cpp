@@ -282,7 +282,8 @@ const sf::Texture* TileAppearanceManager::getTexture() const
 TileAppearanceManager::TileVariantAppearance::TileVariantAppearance() :
 		nodeID(ITexturePacker::packFailure),
 		yOffset(0.f),
-		baseTile(Tile::Invalid)
+		baseTile(Tile::Invalid),
+		opacity(255)
 {
 }
 
