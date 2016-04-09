@@ -76,6 +76,34 @@ void LevelPanel::init()
 	add(mainPanelContainer);
 }
 
+void LevelPanel::setSongs(std::map<int, std::string> songs)
+{
+	songIDs.clear();
+	std::vector<std::string> songNames;
+
+	for (auto it = songs.begin(); it != songs.end(); ++it)
+	{
+		songIDs.push_back(it->first);
+		songNames.push_back(it->second);
+	}
+
+	dropdownMusic->setModel(std::make_shared<gui2::DefaultMenuModel>(songNames));
+}
+
+void LevelPanel::setBosses(std::map<int, std::string> bosses)
+{
+	bossIDs.clear();
+	std::vector<std::string> bossNames;
+
+	for (auto it = bosses.begin(); it != bosses.end(); ++it)
+	{
+		bossIDs.push_back(it->first);
+		bossNames.push_back(it->second);
+	}
+
+	dropdownBoss->setModel(std::make_shared<gui2::DefaultMenuModel>(bossNames));
+}
+
 void LevelPanel::setSelectedLevel(std::size_t level)
 {
 	if (hasSelectedLevel() && getSelectedLevel() == level)
@@ -92,6 +120,7 @@ void LevelPanel::setSelectedLevel(std::size_t level)
 	selectedLevel = level;
 	setLevelListEntryColor(getSelectedLevel(), true);
 	updateLevelButtons();
+	updateDropdowns();
 }
 
 void LevelPanel::unsetSelectedLevel()
@@ -146,6 +175,7 @@ void LevelPanel::updateDungeon()
 		levelListEntries.size() * LEVEL_LIST_ENTRY_HEIGHT);
 
 	updateLevelButtons();
+	updateDropdowns();
 	updateSlider();
 }
 
@@ -209,6 +239,27 @@ void LevelPanel::onResize()
 	}
 }
 
+void LevelPanel::updateDropdowns()
+{
+	dropdownMusic->setEnabled(hasSelectedLevel());
+	dropdownBoss->setEnabled(hasSelectedLevel());
+
+	if (hasSelectedLevel())
+	{
+		// Resolve index of song entry.
+		auto songIterator = std::find(songIDs.begin(), songIDs.end(), dungeon->getLevel(getSelectedLevel()).getMusic());
+
+		// Select song if it has an entry, deselect otherwise.
+		dropdownMusic->setSelectionSilent(songIterator == songIDs.end() ? -1 : (songIterator - songIDs.begin()));
+
+		// Resolve index of boss entry.
+		auto bossIterator = std::find(bossIDs.begin(), bossIDs.end(), dungeon->getLevel(getSelectedLevel()).getBoss());
+
+		// Select boss if it has an entry, deselect otherwise.
+		dropdownBoss->setSelectionSilent(bossIterator == bossIDs.end() ? -1 : (bossIterator - bossIDs.begin()));
+	}
+}
+
 void LevelPanel::updateSlider()
 {
 	float sliderMax = levelListInnerContainer->getSize().y - levelListContainer->getSize().y;
@@ -233,6 +284,30 @@ void LevelPanel::onProcessContainer(gui2::WidgetEvents& events)
 		if (levelEntry->isMouseDown())
 		{
 			selectLevel(i);
+		}
+	}
+
+	if (dropdownMusic->wasChanged())
+	{
+		try
+		{
+			dungeon->getLevel(getSelectedLevel()).setMusic(songIDs.at(dropdownMusic->getSelection()));
+		}
+		catch (...)
+		{
+			// No level selected or song ID somehow out of range? Ignore.
+		}
+	}
+
+	if (dropdownBoss->wasChanged())
+	{
+		try
+		{
+			dungeon->getLevel(getSelectedLevel()).setBoss(bossIDs.at(dropdownBoss->getSelection()));
+		}
+		catch (...)
+		{
+			// No level selected or boss ID somehow out of range? Ignore.
 		}
 	}
 

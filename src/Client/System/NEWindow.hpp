@@ -51,6 +51,7 @@ private:
 	void initResources();
 	void initTools();
 	void initPanels();
+	void initLevelPanel();
 	void initToolbar();
 	void initFileDialogs();
 	void initEditor();
@@ -58,6 +59,8 @@ private:
 
 	void initToolbarButtons(std::string configSection, std::vector<ToolbarButton> & targetVector,
 			gui2::Ptr<gui2::BorderPanel> targetPanel);
+	
+	std::map<int, std::string> generateEnumMap(const std::string & section) const;
 
 	void updateTilePanels();
 

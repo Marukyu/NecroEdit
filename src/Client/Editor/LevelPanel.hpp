@@ -26,6 +26,9 @@ public:
 	 * Factory function.
 	 */
 	static gui2::Ptr<LevelPanel> make();
+	
+	void setSongs(std::map<int, std::string> songs);
+	void setBosses(std::map<int, std::string> bosses);
 
 	void setSelectedLevel(std::size_t level);
 	void unsetSelectedLevel();
@@ -53,6 +56,7 @@ private:
 	void setLevelListEntryColor(std::size_t level, bool highlight);
 	void updateLevelListEntryRect(std::size_t level);
 	void updateLevelButtons();
+	void updateDropdowns();
 	void updateSlider();
 
 	void onResize();
@@ -63,6 +67,9 @@ private:
 	bool isAnyLevelSelected;
 	std::size_t selectedLevel;
 	bool wasLevelChanged;
+	
+	std::vector<int> songIDs;
+	std::vector<int> bossIDs;
 
 	gui2::Ptr<gui2::Container> levelListContainer;
 	gui2::Ptr<gui2::Container> levelListInnerContainer;

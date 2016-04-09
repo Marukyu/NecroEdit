@@ -41,6 +41,7 @@ void NEWindow::loadEditor()
 	initResources();
 	initTools();
 	initPanels();
+	initLevelPanel();
 	initToolbar();
 	initFileDialogs();
 	initEditor();
@@ -169,8 +170,14 @@ void NEWindow::initPanels()
 	mainPanel->add(toolPanelContainer, gui2::BorderPanel::Left, 200);
 
 	levelPanel = LevelPanel::make();
-	levelPanel->setDungeon(dungeon.get());
 	mainPanel->add(levelPanel, gui2::BorderPanel::Right, 150);
+}
+
+void NEWindow::initLevelPanel()
+{
+	levelPanel->setDungeon(dungeon.get());
+	levelPanel->setSongs(generateEnumMap("Music"));
+	levelPanel->setBosses(generateEnumMap("Bosses"));
 }
 
 void NEWindow::initToolbar()
@@ -248,6 +255,26 @@ void NEWindow::initLevel()
 	levelPanel->updateDungeon();
 	levelPanel->setSelectedLevel(0);
 	switchToLevel(&dungeon->getLevel(0));
+}
+
+std::map<int, std::string> NEWindow::generateEnumMap(const std::string& configSection) const
+{
+	std::vector<std::string> enumList = extractSection(splitString(editorConfig, "\n"), configSection);
+	std::map<int, std::string> enumMap;
+	
+	for (const auto & entry : enumList)
+	{
+		std::vector<std::string> entryData = splitString(entry, ",");
+		
+		if (entryData.size() < 2)
+		{
+			continue;
+		}
+		
+		enumMap[cStoI(entryData[0])] = entryData[1];
+	}
+	
+	return std::move(enumMap);
 }
 
 void NEWindow::updateTilePanels()
