@@ -102,6 +102,12 @@ bool ObjectAppearanceManager::loadTXTObjects(const std::string& txtData, const s
 		return false;
 	}
 
+	// Load player characters.
+	if (!loadTXTObjectsFromSection(txtData, basePath + "entities/", "Characters", myCharacters))
+	{
+		return false;
+	}
+
 	// Everything loaded successfully.
 	return true;
 }
@@ -197,7 +203,7 @@ bool ObjectAppearanceManager::loadItems(const pugi::xml_document& doc, const std
 		}
 
 		// Capitalize item name properly.
-		item.name = capitalize(toLowercase(item.name));
+		item.name = capitalize(toLowercase(std::move(item.name)));
 
 		// Create image for full item image file.
 		std::unique_ptr<sf::Image> itemImage = makeUnique<sf::Image>();
@@ -269,10 +275,10 @@ std::vector<sf::Vertex> ObjectAppearanceManager::getObjectVertices(const Object&
 	std::vector<sf::Vertex> vertices;
 
 	// Store common appearance data.
-	sf::Vector2f offset(0.f, 0.f);
-	sf::Vector2f scale(1.f, 1.f);
-	ITexturePacker::NodeID nodeID;
-	float alpha = 1.f;
+	SpriteData spriteData;
+	
+	// Assign object position.
+	spriteData.position = object.getPosition();
 
 	// Use object type to determine appearance data.
 	if (object.getType() == Object::Type::Enemy)
@@ -286,14 +292,14 @@ std::vector<sf::Vertex> ObjectAppearanceManager::getObjectVertices(const Object&
 
 		const EnemyAppearance & enemy = it->second;
 
-		offset.x = enemy.xOffset;
-		offset.y = enemy.yOffset;
+		spriteData.offset.x = enemy.xOffset;
+		spriteData.offset.y = enemy.yOffset;
 
-		nodeID = enemy.nodeID;
+		spriteData.nodeID = enemy.nodeID;
 
 		if (object.getPropertyInt(Object::Property::Lord) != 0)
 		{
-			scale *= 2.f;
+			spriteData.scale *= 2.f;
 		}
 	}
 	else if (object.getType() == Object::Type::Item)
@@ -307,7 +313,39 @@ std::vector<sf::Vertex> ObjectAppearanceManager::getObjectVertices(const Object&
 
 		const ItemAppearance & item = it->second;
 
-		nodeID = item.nodeID;
+		spriteData.nodeID = item.nodeID;
+	}
+	else if (object.getType() == Object::Type::Internal)
+	{
+		switch (object.getPropertyInt(Object::Property::Type))
+		{
+		case InternalCharacter:
+		{
+			auto it = myCharacters.find(object.getPropertyInt(Object::Property::Subtype));
+
+			if (it == myCharacters.end() || it->second.nodeIDs.size() < 2)
+			{
+				return vertices;
+			}
+			
+			// Generate body vertices.
+			spriteData.nodeID = it->second.nodeIDs[1];
+			std::vector<sf::Vertex> bodyVertices = generateSpriteVertices(spriteData);
+			vertices.insert(vertices.end(), bodyVertices.begin(), bodyVertices.end());
+			
+			// Generate head vertices.
+			spriteData.nodeID = it->second.nodeIDs[0];
+			std::vector<sf::Vertex> headVertices = generateSpriteVertices(spriteData);
+			vertices.insert(vertices.end(), headVertices.begin(), headVertices.end());
+			
+			// Return vertices directly.
+			return vertices;
+		}
+			break;
+
+		default:
+			return vertices;
+		}
 	}
 	else
 	{
@@ -329,7 +367,7 @@ std::vector<sf::Vertex> ObjectAppearanceManager::getObjectVertices(const Object&
 			typeProperty = Object::Property::Color;
 			if (object.getPropertyInt(Object::Property::Hidden))
 			{
-				alpha *= 0.5f;
+				spriteData.alpha *= 0.5f;
 			}
 			break;
 		case Object::Type::Shrine:
@@ -348,61 +386,33 @@ std::vector<sf::Vertex> ObjectAppearanceManager::getObjectVertices(const Object&
 
 		try
 		{
-			nodeID = it->second.nodeIDs.at(variant);
-		} catch (...)
+			spriteData.nodeID = it->second.nodeIDs.at(variant);
+		}
+		catch (...)
 		{
-			nodeID = ITexturePacker::packFailure;
+			spriteData.nodeID = ITexturePacker::packFailure;
 		}
 	}
 
-	// Create vertex and texture rectangles.
-	sf::IntRect texRect = myPacker->getImageRect(nodeID);
-	sf::FloatRect vertRect(offset.x, offset.y, texRect.width * scale.x, texRect.height * scale.y);
-	
 	// Apply generic horizontal offset correction.
 	if (object.getType() != Object::Type::Enemy)
 	{
-		vertRect.left += std::floor((TILE_SIZE - vertRect.width) / 2.f);
+		float spriteWidth = myPacker->getImageRect(spriteData.nodeID).width * spriteData.scale.x;
+		spriteData.offset.x += std::floor((TILE_SIZE - spriteWidth) / 2.f);
 	}
 
 	// Apply type-specific vertical offset corrections.
 	if (object.getType() == Object::Type::Trap)
 	{
-		vertRect.top += TILE_SIZE / 2.f;
+		spriteData.offset.y += TILE_SIZE / 2.f;
 	}
 	else if (object.getType() == Object::Type::Shrine)
 	{
-		vertRect.top -= 20.f;
+		spriteData.offset.y -= 20.f;
 	}
-
-	// Base vertex position.
-	sf::Vector2f vp((sf::Vector2f(object.getPosition()) - sf::Vector2f(0.5f, 1.f)) * TILE_SIZE);
-
-	// Vertex corners.
-	sf::Vector2f tl(vertRect.left, vertRect.top);
-	sf::Vector2f tr(vertRect.left + vertRect.width, vertRect.top);
-	sf::Vector2f br(vertRect.left + vertRect.width, vertRect.top + vertRect.height);
-	sf::Vector2f bl(vertRect.left, vertRect.top + vertRect.height);
-
-	// Texture corners.
-	sf::Vector2f ttl(texRect.left, texRect.top);
-	sf::Vector2f ttr(texRect.left + texRect.width, texRect.top);
-	sf::Vector2f tbr(texRect.left + texRect.width, texRect.top + texRect.height);
-	sf::Vector2f tbl(texRect.left, texRect.top + texRect.height);
-
-	// Add vertices to array.
-	vertices.push_back(sf::Vertex(vp + tl, sf::Color::White, ttl));
-	vertices.push_back(sf::Vertex(vp + tr, sf::Color::White, ttr));
-	vertices.push_back(sf::Vertex(vp + bl, sf::Color::White, tbl));
-	vertices.push_back(sf::Vertex(vp + tr, sf::Color::White, ttr));
-	vertices.push_back(sf::Vertex(vp + bl, sf::Color::White, tbl));
-	vertices.push_back(sf::Vertex(vp + br, sf::Color::White, tbr));
-
-	// Apply alpha-transparency.
-	for (auto & vertex : vertices)
-	{
-		vertex.color.a *= alpha;
-	}
+	
+	// Generate vertices from sprite data.
+	vertices = generateSpriteVertices(spriteData);
 
 	// Add extra vertices for chest/crate contents.
 	if (object.getType() == Object::Type::Crate || object.getType() == Object::Type::Chest)
@@ -621,4 +631,54 @@ void ObjectAppearanceManager::onLoadObject(AppearanceLoader::Appearance appearan
 
 	// Use clipped image and pack it into main texture.
 	object.nodeIDs[appearance.variant] = myPacker->addOwn(std::move(appearance.image));
+}
+
+ObjectAppearanceManager::SpriteData::SpriteData()
+{
+	position = sf::Vector2i(0.f, 0.f);
+	offset = sf::Vector2f(0.f, 0.f);
+	scale = sf::Vector2f(1.f, 1.f);
+	nodeID = ITexturePacker::packFailure;
+	alpha = 1.f;
+}
+
+std::vector<sf::Vertex> ObjectAppearanceManager::generateSpriteVertices(SpriteData spriteData) const
+{
+	// Create vertex array.
+	std::vector<sf::Vertex> vertices;
+	
+	// Create vertex and texture rectangles.
+	sf::IntRect texRect = myPacker->getImageRect(spriteData.nodeID);
+	sf::FloatRect vertRect(spriteData.offset.x, spriteData.offset.y, texRect.width * spriteData.scale.x, texRect.height * spriteData.scale.y);
+
+	// Base vertex position.
+	sf::Vector2f vp((sf::Vector2f(spriteData.position) - sf::Vector2f(0.5f, 1.f)) * TILE_SIZE);
+
+	// Vertex corners.
+	sf::Vector2f tl(vertRect.left, vertRect.top);
+	sf::Vector2f tr(vertRect.left + vertRect.width, vertRect.top);
+	sf::Vector2f br(vertRect.left + vertRect.width, vertRect.top + vertRect.height);
+	sf::Vector2f bl(vertRect.left, vertRect.top + vertRect.height);
+
+	// Texture corners.
+	sf::Vector2f ttl(texRect.left, texRect.top);
+	sf::Vector2f ttr(texRect.left + texRect.width, texRect.top);
+	sf::Vector2f tbr(texRect.left + texRect.width, texRect.top + texRect.height);
+	sf::Vector2f tbl(texRect.left, texRect.top + texRect.height);
+
+	// Add vertices to array.
+	vertices.push_back(sf::Vertex(vp + tl, sf::Color::White, ttl));
+	vertices.push_back(sf::Vertex(vp + tr, sf::Color::White, ttr));
+	vertices.push_back(sf::Vertex(vp + bl, sf::Color::White, tbl));
+	vertices.push_back(sf::Vertex(vp + tr, sf::Color::White, ttr));
+	vertices.push_back(sf::Vertex(vp + bl, sf::Color::White, tbl));
+	vertices.push_back(sf::Vertex(vp + br, sf::Color::White, tbr));
+
+	// Apply alpha-transparency.
+	for (auto & vertex : vertices)
+	{
+		vertex.color.a *= spriteData.alpha;
+	}
+	
+	return vertices;
 }

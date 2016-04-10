@@ -25,6 +25,15 @@ class ObjectAppearanceManager
 {
 public:
 
+	/**
+	 * Holds special object type indices for editor-specific graphics.
+	 */
+	enum InternalObjectType
+	{
+		// This object looks like a player character when drawn. Subtype determines the character ID.
+		InternalCharacter
+	};
+
 	ObjectAppearanceManager(ITexturePacker * packer);
 
 	/**
@@ -65,12 +74,12 @@ public:
 	 * Returns the vertices for the specified object.
 	 */
 	std::vector<sf::Vertex> getObjectVertices(const Object & object) const;
-	
+
 	/**
 	 * Returns the name of the specified object.
 	 */
 	const std::string & getObjectName(const Object & object) const;
-	
+
 	/**
 	 * Returns the list of valid values for the "type" field for the specified object type.
 	 * 
@@ -79,22 +88,22 @@ public:
 	 * For chests, the "color" field should be varied, rather than the "type" field.
 	 */
 	std::vector<int> getObjectIDList(Object::Type type) const;
-	
+
 	/**
 	 * Returns a list of valid values for the "subtype" for the specified object type and object ID.
 	 */
 	std::vector<int> getObjectSubtypeList(Object::Type type, int objectTypeID);
-	
+
 	/**
 	 * Returns the list of valid values for the "type" field for items.
 	 */
 	std::vector<std::string> getItemNameList() const;
-	
+
 	/**
 	 * Returns the texture of the texture packer used for loading objects into this appearance manager.
 	 */
 	const sf::Texture * getTexture() const;
-	
+
 private:
 
 	typedef unsigned int EnemyID;
@@ -120,6 +129,17 @@ private:
 		std::vector<ITexturePacker::NodeID> nodeIDs;
 	};
 
+	struct SpriteData
+	{
+		SpriteData();
+
+		sf::Vector2i position;
+		sf::Vector2f offset;
+		sf::Vector2f scale;
+		ITexturePacker::NodeID nodeID;
+		float alpha;
+	};
+
 	bool loadEnemies(const pugi::xml_document & doc, const std::string & basePath);
 	bool loadItems(const pugi::xml_document & doc, const std::string & basePath);
 
@@ -127,6 +147,8 @@ private:
 			const std::string & section, std::map<ObjectID, ObjectAppearance> & target);
 
 	void onLoadObject(AppearanceLoader::Appearance appearance, std::map<ObjectID, ObjectAppearance> & target);
+
+	std::vector<sf::Vertex> generateSpriteVertices(SpriteData spriteData) const;
 
 	ITexturePacker * myPacker;
 
@@ -137,6 +159,8 @@ private:
 	std::map<ObjectID, ObjectAppearance> myCrates;
 	std::map<ObjectID, ObjectAppearance> myChests;
 	std::map<ObjectID, ObjectAppearance> myShrines;
+
+	std::map<ObjectID, ObjectAppearance> myCharacters;
 };
 
 #endif

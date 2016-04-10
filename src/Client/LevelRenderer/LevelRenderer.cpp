@@ -10,9 +10,13 @@ LevelRenderer::LevelRenderer(const Level & level, const TileAppearanceManager & 
 		const ObjectAppearanceManager & objectAppearance) :
 		level(&level),
 		tileAppearance(&tileAppearance),
-		objectAppearance(&objectAppearance)
+		objectAppearance(&objectAppearance),
+		spawnPointVisualizer(Object::Type::Internal)
 {
 	eventListener = level.acquireEventListener();
+	
+	spawnPointVisualizer.setPropertyInt(Object::Property::Type, ObjectAppearanceManager::InternalCharacter);
+	spawnPointVisualizer.setPropertyInt(Object::Property::Subtype, -1);
 
 	for (auto it = level.tilesBegin(); it != level.tilesEnd(); ++it)
 	{
@@ -23,6 +27,8 @@ LevelRenderer::LevelRenderer(const Level & level, const TileAppearanceManager & 
 	{
 		addOrSetObject(*it);
 	}
+	
+	updateSpawnPoint();
 }
 
 LevelRenderer::~LevelRenderer()
@@ -72,6 +78,8 @@ void LevelRenderer::draw(sf::RenderTarget & target, sf::RenderStates states) con
 	{
 		drawTileLayer(TileLayer(layer), target, states);
 	}
+	
+	target.draw(spawnPointVertices.data(), spawnPointVertices.size(), sf::Triangles, states);
 	
 	target.draw(objectVertices.data(), objectVertices.size(), sf::Triangles, states);
 }
@@ -265,4 +273,10 @@ void LevelRenderer::shrinkObjectVertexArray()
 	{
 		objectVertexCounts.pop_back();
 	}
+}
+
+void LevelRenderer::updateSpawnPoint()
+{
+	spawnPointVisualizer.setPosition(level->getPlayerSpawnPoint());
+	spawnPointVertices = objectAppearance->getObjectVertices(spawnPointVisualizer);
 }

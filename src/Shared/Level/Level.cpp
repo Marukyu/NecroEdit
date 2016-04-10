@@ -23,10 +23,10 @@ void Level::assign(const Level& level)
 	boss = level.boss;
 	music = level.music;
 	sections = level.sections;
-	
+
 	objects.clear();
 	objects.reserve(level.objects.size());
-	
+
 	for (Object::ID objectID = 0; objectID < level.objects.size(); ++objectID)
 	{
 		if (level.objects[objectID] == nullptr)
@@ -342,7 +342,14 @@ void Level::applyBrush(sf::Vector2i position, const Brush& brush)
 
 void Level::setPlayerSpawnPoint(sf::Vector2i playerSpawn)
 {
-	this->playerSpawn = playerSpawn;
+	if (this->playerSpawn != playerSpawn)
+	{
+		this->playerSpawn = playerSpawn;
+
+		Event event;
+		event.type = Event::SpawnPointMoved;
+		eventManager.push(event);
+	}
 }
 
 sf::Vector2i Level::getPlayerSpawnPoint() const

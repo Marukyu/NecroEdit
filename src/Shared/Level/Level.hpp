@@ -142,7 +142,8 @@ public:
 			TileChanged,
 			ObjectAdded,
 			ObjectRemoved,
-			ObjectChanged
+			ObjectChanged,
+			SpawnPointMoved
 		};
 
 		Event() :

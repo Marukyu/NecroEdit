@@ -25,7 +25,9 @@ public:
 		Crate,
 		Shrine,
 		
-		TypeCount
+		TypeCount,
+		
+		Internal
 	};
 	
 	enum class Property

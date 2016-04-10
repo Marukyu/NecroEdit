@@ -63,7 +63,7 @@
 [Traps]
 
 # Objects and Object Variants are defined similarly to Tiles and Tile Variants,
-# with the exception of the variant image definition: ImageFile:CropX,CropY,CropWidth,CropHeight,Flipped
+# with the exception of the variant image definition: ImageFile:CropX:CropY:CropWidth:CropHeight:Flipped
 
 # If the Flipped parameter is set to "flipped", the image is mirrored horizontally.
 
@@ -110,18 +110,19 @@
 [Characters]
 
 # Format: CharacterID,CharacterName,HeadImage,BodyImage
+# Both HeadImage and BodyImage use the format: ImageFile:CropX:CropY:CropWidth:CropHeight
 
--1,Any,player4_heads,player4_armor_body
-0,Cadence,player1_heads,player1_armor_body
-1,Melody,char1_heads,char1_armor_body
-2,Aria,char2_heads,char2_armor_body
-3,Dorian,char3_heads,char3_armor_body
-4,Eli,char4_heads,char4_armor_body
-5,Monk,char5_heads,char5_armor_body
-6,Dove,char6_heads,char6_armor_body
-7,Coda,char7_heads,char7_armor_body
-8,Bolt,char8_heads,char8_armor_body
-9,Bard,char9_heads,char9_armor_body
+-1,Any,player4_heads:0:0:24:24,player4_armor_body:0:0:24:24
+0,Cadence,player1_heads:0:0:24:24,player1_armor_body:0:0:24:24
+1,Melody,char1_heads:0:0:24:24,char1_armor_body:0:0:24:24
+2,Aria,char2_heads:0:0:24:24,char2_armor_body:0:0:24:24
+3,Dorian,char3_heads:0:0:24:24,char3_armor_body:0:0:24:24
+4,Eli,char4_heads:0:0:24:24,char4_armor_body:0:0:24:24
+5,Monk,char5_heads:0:0:24:24,char5_armor_body:0:0:24:24
+6,Dove,char6_heads:0:0:24:24,char6_armor_body:0:0:24:24
+7,Coda,char7_heads:0:0:24:24,char7_armor_body:0:0:24:24
+8,Bolt,char8_heads:0:0:24:24,char8_armor_body:0:0:24:24
+9,Bard,char9_heads:0:0:24:24,char9_armor_body:0:0:24:24
 
 [Bosses]
 

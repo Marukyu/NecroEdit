@@ -66,7 +66,7 @@ private:
 	 * Override for SFML drawable.
 	 */
 	void draw(sf::RenderTarget & target, sf::RenderStates states) const override;
-	
+
 	/**
 	 * Draws a single tile layer.
 	 */
@@ -95,13 +95,13 @@ private:
 	 */
 	std::size_t addTileEntry(sf::Vector2i position, TileLayer layer);
 	void setTileVertices(sf::Vector2i position, TileVertexArray vertices, TileLayer layer);
-	
+
 	/**
 	 * Updates the specified object's vertex array entry with its appearance data, creating the entry if it does not
 	 * exist yet.
 	 */
 	void addOrSetObject(const Object & object);
-	
+
 	/**
 	 * Removes the specified object's vertex array entry.
 	 */
@@ -110,9 +110,11 @@ private:
 	void setObjectVertexCount(Object::ID objectID, std::size_t size);
 	std::size_t getObjectVertexIndex(Object::ID objectID);
 	std::size_t getObjectVertexCount(Object::ID objectID);
-	
+
 	void expandObjectVertexArray(Object::ID objectID);
 	void shrinkObjectVertexArray();
+	
+	void updateSpawnPoint();
 
 	const Level * level;
 	const TileAppearanceManager * tileAppearance;
@@ -123,6 +125,9 @@ private:
 
 	std::vector<std::size_t> objectVertexCounts;
 	std::vector<sf::Vertex> objectVertices;
+
+	Object spawnPointVisualizer;
+	std::vector<sf::Vertex> spawnPointVertices;
 
 	EventListener<Level::Event> eventListener;
 };
