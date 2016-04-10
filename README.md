@@ -13,17 +13,14 @@ Requires a copy of Crypt of the NecroDancer.
 * Dungeon saving
 * Basic brush tools (place/erase objects and tiles)
 * Level management (select, add, remove, arrange levels)
+* Level properties (music, boss, player spawn point)
 
 ### In progress
-* *Add scroll bar to level list if it gets too long*
-* *Limit level panel to reasonable sizes*
-* Level properties (music, boss, player spawn point)
+* Better object placement (object stacking, removing topmost object only, etc.)
+* Object properties when placing (position, type, enemy beat delay, chest content, etc.)
 
 ### TODO
 * *Fix save action (currently aliased to "save as")*
-* *Remove "window-in-window"*
-* Better object placement (object stacking, removing topmost object only, etc.)
-* Object properties when placing (position, type, enemy beat delay, chest content, etc.)
 * Selection tool
 * Picking for brush tools (select tile hovered by mouse cursor)
 * More brush shapes (line, rectangle)
