@@ -14,7 +14,7 @@ LevelRenderer::LevelRenderer(const Level & level, const TileAppearanceManager & 
 		spawnPointVisualizer(Object::Type::Internal)
 {
 	eventListener = level.acquireEventListener();
-	
+
 	spawnPointVisualizer.setPropertyInt(Object::Property::Type, ObjectAppearanceManager::InternalCharacter);
 	spawnPointVisualizer.setPropertyInt(Object::Property::Subtype, -1);
 
@@ -27,7 +27,7 @@ LevelRenderer::LevelRenderer(const Level & level, const TileAppearanceManager & 
 	{
 		addOrSetObject(*it);
 	}
-	
+
 	updateSpawnPoint();
 }
 
@@ -59,9 +59,13 @@ void LevelRenderer::update()
 				addOrSetObject(level->getObject(event.objectID));
 			}
 			break;
-			
+
 		case Level::Event::ObjectRemoved:
 			removeObject(event.objectID);
+			break;
+
+		case Level::Event::SpawnPointMoved:
+			updateSpawnPoint();
 			break;
 
 		default:
@@ -78,9 +82,9 @@ void LevelRenderer::draw(sf::RenderTarget & target, sf::RenderStates states) con
 	{
 		drawTileLayer(TileLayer(layer), target, states);
 	}
-	
+
 	target.draw(spawnPointVertices.data(), spawnPointVertices.size(), sf::Triangles, states);
-	
+
 	target.draw(objectVertices.data(), objectVertices.size(), sf::Triangles, states);
 }
 
