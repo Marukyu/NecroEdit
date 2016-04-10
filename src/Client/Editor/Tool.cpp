@@ -1,5 +1,6 @@
 #include <Client/Editor/Tool.hpp>
 #include <Client/Editor/Tools/ObjectTool.hpp>
+#include <Client/Editor/Tools/SpawnPointTool.hpp>
 #include <Client/Editor/Tools/TileTool.hpp>
 #include <Shared/Level/Object.hpp>
 #include <algorithm>
@@ -78,4 +79,5 @@ void Tool::initializeToolFactory()
 		return new ObjectTool(
 				{	Object::Type::Crate, Object::Type::Chest, Object::Type::Trap, Object::Type::Shrine});
 	});
+	Tool::registrate<SpawnPointTool>("set_player_spawn");
 }

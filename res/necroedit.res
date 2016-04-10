@@ -193,3 +193,4 @@ place_tile,91,Place Tiles
 place_enemy,93,Place Enemies
 place_item,95,Place Items
 place_misc,94,Place Objects
+set_player_spawn,96,Set Player Spawn Point
