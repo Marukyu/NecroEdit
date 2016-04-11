@@ -58,6 +58,8 @@ bool AppearanceLoader::loadAppearance(const std::string& data, const std::string
 			// Ignore invalid or null variants.
 			if (currentVariant.empty() || currentVariant[0] == "null")
 			{
+				// Increment variant count.
+				variantID++;
 				continue;
 			}
 
@@ -80,6 +82,8 @@ bool AppearanceLoader::loadAppearance(const std::string& data, const std::string
 				// Load image for the object variant.
 				if (!currentImage->loadFromFile(basePath + currentVariant[0] + ".png"))
 				{
+					// Increment variant count.
+					variantID++;
 					continue;
 				}
 
