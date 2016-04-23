@@ -9,6 +9,7 @@
 #include <Shared/Utils/Utilities.hpp>
 #include <algorithm>
 #include <memory>
+#include <cmath>
 
 namespace gui2
 {
