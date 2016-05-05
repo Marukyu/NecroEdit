@@ -28,7 +28,7 @@ private:
 	std::vector<Object::Type> objectTypes;
 
 	mutable Brush primaryBrush;
-	Brush secondaryBrush;
+	mutable Brush secondaryBrush;
 
 	gui2::Ptr<ObjectToolPanel> settingsPanel;
 };

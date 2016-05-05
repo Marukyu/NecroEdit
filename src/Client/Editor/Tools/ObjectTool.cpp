@@ -7,8 +7,6 @@
 ObjectTool::ObjectTool(std::vector<Object::Type> objectTypes) :
 		objectTypes(objectTypes)
 {
-	primaryBrush.setObjectMode(Brush::ObjectMode::ReplaceAll);
-	secondaryBrush.setObjectMode(Brush::ObjectMode::EraseAll);
 }
 
 ObjectTool::~ObjectTool()
@@ -78,10 +76,12 @@ gui2::Ptr<gui2::Widget> ObjectTool::getSettingsPanel() const
 const Brush& ObjectTool::getPrimaryBrush() const
 {
 	primaryBrush.setObject(settingsPanel->getSelectedObject());
+	primaryBrush.setObjectMode(settingsPanel->getPrimaryMode());
 	return primaryBrush;
 }
 
 const Brush& ObjectTool::getSecondaryBrush() const
 {
+	secondaryBrush.setObjectMode(settingsPanel->getSecondaryMode());
 	return secondaryBrush;
 }
