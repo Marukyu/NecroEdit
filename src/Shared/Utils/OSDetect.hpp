@@ -5,7 +5,7 @@
 		#define WOS_WINDOWS
 	#elif defined __linux__ || defined __linux || defined linux
 		#define WOS_LINUX
-	#elif defined __APPLE__ && TARGET_OS_MAC
+	#elif defined __APPLE__ || defined TARGET_OS_MAC
 		#define WOS_OSX
 	#else
 		#error Unsupported operating system.
