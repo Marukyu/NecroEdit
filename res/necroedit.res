@@ -80,9 +80,9 @@
 
 [Crates]
 
-1,Crate,crate:0:0:24:24
-2,Barrel,barrel:0:0:28:27
-3,Teh Urn,teh_urn:0:0:24:28
+0,Crate,crate:0:0:24:24
+1,Barrel,barrel:0:0:28:27
+2,Teh Urn,teh_urn:0:0:24:28
 
 [Chests]
 
