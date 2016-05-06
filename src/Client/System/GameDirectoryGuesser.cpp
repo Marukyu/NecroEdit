@@ -22,8 +22,8 @@ std::vector<std::string> GameDirectoryGuesser::getDirectoryList()
 	SHGetFolderPath(nullptr, CSIDL_PROGRAM_FILES, nullptr, 0, programFilesDirectory);
 	SHGetFolderPath(nullptr, CSIDL_PROGRAM_FILESX86, nullptr, 0, programFilesX86Directory);
 
-	std::wstring programFilesW(programFilesDirectory);
-	std::wstring programFilesX86W(programFilesX86Directory);
+	std::basic_string<TCHAR> programFilesW(programFilesDirectory);
+	std::basic_string<TCHAR> programFilesX86W(programFilesX86Directory);
 
 	std::string programFilesA(programFilesW.begin(), programFilesW.end());
 	std::string programFilesX86A(programFilesX86W.begin(), programFilesX86W.end());
