@@ -1,4 +1,5 @@
 #include <Client/Graphics/BitmapText.hpp>
+#include <Client/System/GameDirectoryGuesser.hpp>
 #include <Client/System/NEApplication.hpp>
 #include <Client/System/NEInterface.hpp>
 #include <SFML/Graphics/Image.hpp>
@@ -32,6 +33,17 @@ bool NEApplication::chooseGameDirectory()
 		return true;
 	}
 
+	// Check common game directories.
+	for (auto dir : GameDirectoryGuesser::getDirectoryList())
+	{
+		gameDirectory = dir;
+
+		if (checkGameDirectory())
+		{
+			return true;
+		}
+	}
+
 	bool showMessage = false;
 
 	FileChooser fc;
@@ -39,8 +51,7 @@ bool NEApplication::chooseGameDirectory()
 
 	MessageBox errorMessage("This is not a valid NecroDancer directory.\n\n"
 		"Please select your NecroDancer installation directory (typically found in "
-		"your SteamApps folder)\nor click \"Cancel\" to exit.", "NecroEdit", MessageBox::Error,
-		MessageBox::OkCancel);
+		"your SteamApps folder)\nor click \"Cancel\" to exit.", "NecroEdit", MessageBox::Error, MessageBox::OkCancel);
 
 	do
 	{
@@ -66,7 +77,8 @@ bool NEApplication::chooseGameDirectory()
 
 		showMessage = true;
 
-	} while (!checkGameDirectory());
+	}
+	while (!checkGameDirectory());
 
 	return true;
 }
@@ -174,7 +186,7 @@ int NEApplication::init(const std::vector<std::string>& args)
 		fontError.show();
 		return LoadErrorFont;
 	}
-	
+
 	setTextureSmoothingEnabled(false);
 
 	open();
@@ -187,9 +199,9 @@ void NEApplication::printUsage(const std::string & exeName)
 	std::cout << "Usage: " << exeName << " [Options] [Dungeon File]" << std::endl;
 	std::cout << "Options:" << std::endl;
 	std::cout << "-g / --game-directory [dir]: Specify [dir] as containing the game's executable and resource files"
-			<< std::endl;
+		<< std::endl;
 	std::cout << "-r / --resource-directory [dir]: Specify [dir] as containing the editor's resource files"
-			<< std::endl;
+		<< std::endl;
 	std::cout << "-h / --help: Show this help" << std::endl;
 	std::cout << "--: Treat following arguments as dungeon file to load, rather than as options" << std::endl;
 }
