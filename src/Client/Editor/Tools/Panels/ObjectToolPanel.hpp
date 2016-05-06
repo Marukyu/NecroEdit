@@ -1,8 +1,8 @@
 #ifndef SRC_CLIENT_EDITOR_TOOLS_PANELS_OBJECTTOOLPANEL_HPP_
 #define SRC_CLIENT_EDITOR_TOOLS_PANELS_OBJECTTOOLPANEL_HPP_
 
+#include <Client/Editor/ObjectPropertyPanel.hpp>
 #include <Client/Editor/SelectionPanel.hpp>
-#include <Client/GUI2/Container.hpp>
 #include <Client/GUI2/GUI.hpp>
 #include <Client/GUI2/Widgets/Dropdown.hpp>
 #include <Client/LevelRenderer/ObjectAppearance.hpp>
@@ -43,8 +43,10 @@ protected:
 	virtual void init() override;
 
 private:
-	
+
 	void onProcessContainer(gui2::WidgetEvents & events) override;
+
+	void addDefaultPropertiesToObject();
 
 	const ObjectAppearanceManager * objectAppearance;
 
@@ -53,7 +55,8 @@ private:
 
 	gui2::Ptr<gui2::Dropdown> primaryModeMenu;
 	gui2::Ptr<gui2::Dropdown> secondaryModeMenu;
-	gui2::Ptr<SelectionPanel> panel;
+	gui2::Ptr<SelectionPanel> selectionPanel;
+	gui2::Ptr<ObjectPropertyPanel> propertyPanel;
 };
 
 #endif

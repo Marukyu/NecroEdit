@@ -226,6 +226,100 @@ Object::Property Object::getPropertyByName(const char * propName)
 	return Property::Invalid;
 }
 
+Object::PropertyValueType Object::getPropertyValueType(Type type, Property property)
+{
+	switch (property)
+	{
+	case Object::Property::ID:
+	case Object::Property::Subtype:
+	case Object::Property::BeatDelay:
+	case Object::Property::Color:
+		return PropertyValueType::Int;
+
+	case Object::Property::Lord:
+	case Object::Property::BloodCost:
+	case Object::Property::SaleCost:
+	case Object::Property::SingleChoice:
+	case Object::Property::Hidden:
+		return PropertyValueType::Bool;
+
+	case Object::Property::Contents:
+	default:
+		return PropertyValueType::String;
+
+	case Object::Property::Type:
+		// Items store their name in the "type" field, whereas other object use a numeric ID.
+		return (type == Object::Type::Item ? PropertyValueType::String : PropertyValueType::Int);
+	}
+}
+
+// TODO: Read from necroedit.res instead of hardcoding defaults map.
+static const std::map<Object::Type, std::map<Object::Property, std::string> > defaultProperties =
+{
+	{
+		Object::Type::Trap,
+		{
+			{ Object::Property::Type, "1" },
+			{ Object::Property::Subtype, "0" }
+		}
+	},
+	{
+		Object::Type::Enemy,
+		{
+			{ Object::Property::Type, "0" },
+			{ Object::Property::BeatDelay, "0" },
+			{ Object::Property::Lord, "0" }
+		}
+	},
+	{
+		Object::Type::Item,
+		{
+			{ Object::Property::Type, "food_1" },
+			{ Object::Property::BloodCost, "0" },
+			{ Object::Property::SaleCost, "0" },
+			{ Object::Property::SingleChoice, "0" }
+		}
+	},
+	{
+		Object::Type::Chest,
+		{
+			{ Object::Property::Color, "1" },
+			{ Object::Property::Contents, "no_item" },
+			{ Object::Property::Hidden, "0" },
+			{ Object::Property::SaleCost, "0" },
+			{ Object::Property::SingleChoice, "0" }
+		}
+	},
+	{
+		Object::Type::Crate,
+		{
+			{ Object::Property::Type, "0" }
+		}
+	},
+	{
+		Object::Type::Shrine,
+		{
+			{ Object::Property::Type, "0" }
+		}
+	},
+};
+
+const std::map<Object::Property, std::string>& Object::getDefaultProperties(Type type)
+{
+	static const std::map<Object::Property, std::string> emptyMap = {};
+
+	auto it = defaultProperties.find(type);
+
+	if (it == defaultProperties.end())
+	{
+		return emptyMap;
+	}
+	else
+	{
+		return it->second;
+	}
+}
+
 void Object::setID(ID id)
 {
 	this->id = id;

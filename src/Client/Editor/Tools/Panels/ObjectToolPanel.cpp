@@ -9,7 +9,7 @@
 #include <string>
 
 gui2::Ptr<ObjectToolPanel> ObjectToolPanel::make(std::vector<Object> objects,
-		const ObjectAppearanceManager & objectAppearance)
+	const ObjectAppearanceManager & objectAppearance)
 {
 	gui2::Ptr<ObjectToolPanel> widget = std::make_shared<ObjectToolPanel>(objects, objectAppearance);
 	widget->init();
@@ -17,7 +17,7 @@ gui2::Ptr<ObjectToolPanel> ObjectToolPanel::make(std::vector<Object> objects,
 }
 
 ObjectToolPanel::ObjectToolPanel(std::vector<Object> objects, const ObjectAppearanceManager & objectAppearance) :
-		objectAppearance(&objectAppearance)
+	objectAppearance(&objectAppearance)
 {
 	this->objects = std::move(objects);
 }
@@ -39,8 +39,7 @@ static const std::vector<std::string> BRUSH_MODE_NAMES = {
 	"Replace front",
 	"Place/replace front",
 	"Erase all",
-	"Erase front"
-};
+	"Erase front" };
 
 Brush::ObjectMode ObjectToolPanel::getPrimaryMode() const
 {
@@ -76,13 +75,16 @@ void ObjectToolPanel::init()
 	modePanel->add(primaryModeMenu);
 	modePanel->add(secondaryModeMenu);
 
-	panel = SelectionPanel::make();
-	panel->setTexture(objectAppearance->getTexture());
-	panel->setMapper(mapperFactory.generateObjectMapper(this->objects), this->objects.size());
+	selectionPanel = SelectionPanel::make();
+	selectionPanel->setTexture(objectAppearance->getTexture());
+	selectionPanel->setMapper(mapperFactory.generateObjectMapper(this->objects), this->objects.size());
+
+	propertyPanel = ObjectPropertyPanel::make();
 
 	auto borderPanel = gui2::BorderPanel::make();
 
-	borderPanel->add(panel, gui2::BorderPanel::Center);
+	borderPanel->add(selectionPanel, gui2::BorderPanel::Center);
+	borderPanel->add(propertyPanel, gui2::BorderPanel::Bottom);
 	borderPanel->add(modePanel, gui2::BorderPanel::Bottom, 50);
 
 	add(borderPanel);
@@ -90,17 +92,39 @@ void ObjectToolPanel::init()
 
 void ObjectToolPanel::onProcessContainer(gui2::WidgetEvents& events)
 {
-	if (panel->wasChanged())
+	if (selectionPanel->wasChanged())
 	{
-		if (panel->hasSelection())
+		if (selectionPanel->hasSelection())
 		{
 			// Copy object into selection to allow applying properties without modifying prototype array.
-			selectedObject = Object(objects[panel->getSelection()]);
+			selectedObject = Object(objects[selectionPanel->getSelection()]);
+
+			// Set property defaults for missing property keys.
+			addDefaultPropertiesToObject();
+
+			// Update property panel.
+			propertyPanel->setObject(&selectedObject);
+			propertyPanel->update();
 		}
 		else
 		{
 			// Assign "none" type to mark object as invalid.
 			selectedObject.setType(Object::Type::None);
+
+			// Update property panel.
+			propertyPanel->setObject(nullptr);
+			propertyPanel->update();
+		}
+	}
+}
+
+void ObjectToolPanel::addDefaultPropertiesToObject()
+{
+	for (const auto & property : Object::getDefaultProperties(selectedObject.getType()))
+	{
+		if (!selectedObject.hasProperty(property.first))
+		{
+			selectedObject.setPropertyString(property.first, property.second);
 		}
 	}
 }

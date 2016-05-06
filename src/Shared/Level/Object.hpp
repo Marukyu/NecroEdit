@@ -47,6 +47,13 @@ public:
 		Count,
 		Invalid
 	};
+
+	enum class PropertyValueType
+	{
+		Int,
+		String,
+		Bool
+	};
 	
 	Object(Object && object) = default;
 	Object & operator=(Object && object) = default;
@@ -82,6 +89,9 @@ public:
 	
 	static const char * getPropertyName(Property prop);
 	static Property getPropertyByName(const char * propName);
+	
+	static PropertyValueType getPropertyValueType(Type type, Property property);
+	static const std::map<Property, std::string> & getDefaultProperties(Type type);
 
 private:
 	
