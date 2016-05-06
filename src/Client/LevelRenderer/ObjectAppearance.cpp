@@ -14,6 +14,7 @@
 #include <Shared/External/PugiXML/pugixml.hpp>
 #include <Shared/Utils/MakeUnique.hpp>
 #include <Shared/Utils/Utilities.hpp>
+#include <Shared/Utils/VectorMul.hpp>
 #include <algorithm>
 #include <cmath>
 #include <memory>
@@ -299,7 +300,7 @@ std::vector<sf::Vertex> ObjectAppearanceManager::getObjectVertices(const Object&
 
 		if (object.getPropertyInt(Object::Property::Lord) != 0)
 		{
-			spriteData.scale *= 2.f;
+			spriteData.scale *= 1.5f;
 		}
 	}
 	else if (object.getType() == Object::Type::Item)
@@ -642,6 +643,14 @@ ObjectAppearanceManager::SpriteData::SpriteData()
 	alpha = 1.f;
 }
 
+void ObjectAppearanceManager::applyScaleFactor(sf::Vector2f & position, sf::Vector2f scaleFactor)
+{
+	static const sf::Vector2f offset = sf::Vector2f(0.5f, 1.f) * TILE_SIZE;
+	position -= offset;
+	position *= scaleFactor;
+	position += offset;
+}
+
 std::vector<sf::Vertex> ObjectAppearanceManager::generateSpriteVertices(SpriteData spriteData) const
 {
 	// Create vertex array.
@@ -649,7 +658,7 @@ std::vector<sf::Vertex> ObjectAppearanceManager::generateSpriteVertices(SpriteDa
 	
 	// Create vertex and texture rectangles.
 	sf::IntRect texRect = myPacker->getImageRect(spriteData.nodeID);
-	sf::FloatRect vertRect(spriteData.offset.x, spriteData.offset.y, texRect.width * spriteData.scale.x, texRect.height * spriteData.scale.y);
+	sf::FloatRect vertRect(spriteData.offset.x, spriteData.offset.y, texRect.width, texRect.height);
 
 	// Base vertex position.
 	sf::Vector2f vp((sf::Vector2f(spriteData.position) - sf::Vector2f(0.5f, 1.f)) * TILE_SIZE);
@@ -659,6 +668,12 @@ std::vector<sf::Vertex> ObjectAppearanceManager::generateSpriteVertices(SpriteDa
 	sf::Vector2f tr(vertRect.left + vertRect.width, vertRect.top);
 	sf::Vector2f br(vertRect.left + vertRect.width, vertRect.top + vertRect.height);
 	sf::Vector2f bl(vertRect.left, vertRect.top + vertRect.height);
+
+	// Apply scale to corners.
+	applyScaleFactor(tl, spriteData.scale);
+	applyScaleFactor(tr, spriteData.scale);
+	applyScaleFactor(br, spriteData.scale);
+	applyScaleFactor(bl, spriteData.scale);
 
 	// Texture corners.
 	sf::Vector2f ttl(texRect.left, texRect.top);

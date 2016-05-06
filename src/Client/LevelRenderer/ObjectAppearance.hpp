@@ -148,6 +148,7 @@ private:
 
 	void onLoadObject(AppearanceLoader::Appearance appearance, std::map<ObjectID, ObjectAppearance> & target);
 
+	static void applyScaleFactor(sf::Vector2f & position, sf::Vector2f scaleFactor);
 	std::vector<sf::Vertex> generateSpriteVertices(SpriteData spriteData) const;
 
 	ITexturePacker * myPacker;
