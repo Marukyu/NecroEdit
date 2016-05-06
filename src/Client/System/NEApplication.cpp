@@ -5,10 +5,16 @@
 #include <SFML/Graphics/Image.hpp>
 #include <Shared/Utils/FileChooser.hpp>
 #include <Shared/Utils/MessageBox.hpp>
+#include <Shared/Utils/OSDetect.hpp>
 #include <Shared/Utils/Utilities.hpp>
 #include <cstdbool>
 #include <exception>
 #include <iostream>
+
+#ifdef WOS_WINDOWS
+#	include <Windows.h>
+#	undef MessageBox
+#endif
 
 std::string NEApplication::getGameDirectory() const
 {
@@ -85,6 +91,10 @@ bool NEApplication::chooseGameDirectory()
 
 int NEApplication::init(const std::vector<std::string>& args)
 {
+#ifdef WOS_WINDOWS
+	FreeConsole();
+#endif
+
 	resourceDirectory = ".";
 	gameDirectory = ".";
 
