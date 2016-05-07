@@ -17,6 +17,7 @@
 #include <Shared/Utils/MakeUnique.hpp>
 #include <Shared/Utils/MessageBox.hpp>
 #include <Shared/Utils/NamedFactory.hpp>
+#include <Shared/Utils/OSDetect.hpp>
 #include <Shared/Utils/StrNumCon.hpp>
 #include <Shared/Utils/Utilities.hpp>
 #include <algorithm>
@@ -227,7 +228,12 @@ void NEWindow::initToolbarButtons(std::string configSection, std::vector<Toolbar
 
 void NEWindow::initFileDialogs()
 {
-	std::string dungeonsFolder = gameDirectory + "/dungeons/";
+	#ifdef WOS_OSX
+		// On OSX, ressources and dungeons aren't in the same folder, use relative path to get to the dungeons
+		std::string dungeonsFolder = gameDirectory + "/../../../dungeons/";
+	#else
+		std::string dungeonsFolder = gameDirectory + "/dungeons/";
+	#endif
 
 	// Create dungeons folder if it does not exist yet
 	createDirectoryStructure(dungeonsFolder);

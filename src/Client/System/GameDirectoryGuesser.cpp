@@ -4,7 +4,7 @@
 #ifdef WOS_WINDOWS
 #	include <windows.h>
 #	include <shlobj.h>
-#elif defined WOS_LINUX
+#elif defined WOS_LINUX || defined WOS_OSX
 #	include <pwd.h>
 #	include <unistd.h>
 #	include <cstdlib>
@@ -53,9 +53,28 @@ std::vector<std::string> GameDirectoryGuesser::getDirectoryList()
 		directories.push_back(homeDirectory + "/.local/share/Steam/SteamApps/common/Crypt of the NecroDancer");
 	}
 
+#elif defined WOS_OSX
+
+	// Get user's home directory, if set through $HOME.
+	const char * homeDirectoryPtr = std::getenv("HOME");
+
+	if (homeDirectoryPtr == nullptr)
+	{
+		// Get user's home directory, if not set through $HOME.
+		homeDirectoryPtr = getpwuid(getuid())->pw_dir;
+	}
+
+	if (homeDirectoryPtr != nullptr)
+	{
+		std::string homeDirectory(homeDirectoryPtr);
+
+		directories.push_back(homeDirectory + "/Library/Application Support/Steam/steamapps/common/Crypt of the NecroDancer/NecroDancer.app/Contents/Resources");
+		// Default GOG install
+		directories.push_back("/Applications/Crypt of the Necrodancer.app/Contents/Resources/game/NecroDancer.app/Contents/Resources");
+	}
+
 #endif
 
-	// TODO: Detect game path for Mac OS X.
 
 	return directories;
 }
