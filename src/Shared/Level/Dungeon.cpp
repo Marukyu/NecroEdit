@@ -232,7 +232,7 @@ bool Dungeon::saveToXML(const std::string& filename) const
 
 	// Add dungeon attributes.
 	dungeonNode.append_attribute("character").set_value(playerCharacter + (isStartItemsEnabled() ? 0 : 1000));
-	dungeonNode.append_attribute("name").set_value(name.c_str());
+	dungeonNode.append_attribute("name").set_value(boost::filesystem::path(filename).stem().string().c_str());
 	dungeonNode.append_attribute("numLevels").set_value((int) levels.size());
 
 	// Add levels.
