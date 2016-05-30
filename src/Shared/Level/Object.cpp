@@ -293,7 +293,8 @@ static const std::map<Object::Type, std::map<Object::Property, std::string> > de
 	{
 		Object::Type::Crate,
 		{
-			{ Object::Property::Type, "0" }
+			{ Object::Property::Type, "0" },
+			{ Object::Property::Contents, "no_item" }
 		}
 	},
 	{
