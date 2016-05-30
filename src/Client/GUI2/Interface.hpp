@@ -90,9 +90,16 @@ private:
 	class RootContainer : public Container
 	{
 	public:
+		static Ptr<RootContainer> make();
+
 		bool isClippingWidgets() const;
 
+	protected:
+
+		virtual void init() override;
+
 	private:
+
 		void onProcessContainer(const WidgetEvents & events);
 	};
 

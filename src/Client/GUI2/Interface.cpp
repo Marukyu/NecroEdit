@@ -10,7 +10,7 @@ Interface::Interface() :
 	myIsFullscreen(false),
 	myIsMouseCursorVisible(true),
 	myHasFocus(true),
-	myRootContainer(std::make_shared<RootContainer>()),
+	myRootContainer(RootContainer::make()),
 	myParentApplication(0),
 	myWindowSize(1280, 720),
 	myWindowTitle("Unnamed window")
@@ -207,9 +207,21 @@ void Interface::onRender()
 
 }
 
+Ptr<Interface::RootContainer> Interface::RootContainer::make()
+{
+	Ptr<RootContainer> widget = std::make_shared<RootContainer>();
+	widget->init();
+	return widget;
+}
+
 bool Interface::RootContainer::isClippingWidgets() const
 {
 	return false;
+}
+
+void Interface::RootContainer::init()
+{
+	Container::init();
 }
 
 void Interface::RootContainer::onProcessContainer(const WidgetEvents & events)
