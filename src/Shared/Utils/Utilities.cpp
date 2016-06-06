@@ -18,7 +18,7 @@
 #include <string>
 #include <vector>
 
-#ifdef WOS_LINUX
+#if defined WOS_LINUX || defined WOS_OSX
 #	include <sys/stat.h>
 #	include <sys/types.h>
 #elif defined WOS_WINDOWS
