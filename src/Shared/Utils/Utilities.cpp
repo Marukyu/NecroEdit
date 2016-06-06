@@ -242,7 +242,7 @@ bool createDirectoryStructure(const std::string & path)
 std::string readFile(const std::string & filename)
 {
 	std::string content;
-	std::ifstream file(filename);
+	std::ifstream file(filename, std::ios::binary);
 	if (!file)
 	{
 		return content;
@@ -250,7 +250,10 @@ std::string readFile(const std::string & filename)
 	file.seekg(0, std::ios::end);
 	content.resize(file.tellg());
 	file.seekg(0, std::ios::beg);
-	file.read(&content[0], content.size());
+	if (!content.empty())
+	{
+		file.read(&content[0], content.size());
+	}
 	return content;
 }
 
