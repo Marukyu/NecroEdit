@@ -45,13 +45,13 @@
 101,!Dirt Wall 2,=100
 102,Level Border,end_of_world
 103,Door,door_front:0:0:24:29:-15:0
-104,Shop Wall,wall_shop_crypt
+104,Shop Wall,wall_shop_crypt,wall_shop_crypt,wall_shop_crypt,wall_shop_crypt,wall_shop_crypt,wall_shop_crypt,wall_shop_crypt_cracked,wall_shop_crypt_cracked,wall_shop_crypt_cracked,wall_shop_crypt_cracked,wall_shop_crypt_cracked
 105,Unbreakable Wall,wall_shop_crypt_dark
 106,Locked Door,door_locked_front:0:0:24:32:-15:0
 107,Stone Wall,wall_stone_crypt,zone2_wall_stone,zone3_wall_stone_hot,zone3_wall_stone_cold,zone4_wall_rock_A,boss_wall,zone1_wall_stone_cracked,zone2_wall_stone_crack,zone3_wall_stone_hot_cracked,zone3_wall_stone_cold_cracked,zone4_wall_rock_A_crack
-108,Catacomb Wall,wall_catacomb_crypt1,wall_catacomb_crypt1,wall_catacomb_crypt1,wall_catacomb_crypt1,zone4_wall_catacomb_A,wall_catacomb_crypt1
+108,Catacomb Wall,wall_catacomb_crypt1,wall_catacomb_crypt1,wall_catacomb_crypt1,wall_catacomb_crypt1,zone4_wall_catacomb_A,wall_catacomb_crypt1,zone1_catacomb_cracked,zone1_catacomb_cracked,zone1_catacomb_cracked,zone1_catacomb_cracked,zone4_wall_catacomb_A_crack
 109,Boss Wall,boss_wall
-110,Cracked Shop Wall,wall_shop_crypt_cracked
+110,!Cracked Shop Wall,wall_shop_crypt_cracked
 111,Metal Door,door_metal_front:0:0:24:29:-15:0
 112,NecroDancer Stage Green,necrodancer_stage:0:0:24:61:-36
 113,NecroDancer Stage Turquoise,necrodancer_stage:24:0:24:61:-36
