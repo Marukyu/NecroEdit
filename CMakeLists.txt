@@ -36,19 +36,11 @@ add_executable(${EXECUTABLE_NAME} ${SOURCES})
 # Add CMake modules
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
-# Detect and add Boost
-# TODO: Determine actual required Boost version.
-find_package(Boost 1.47.0 REQUIRED COMPONENTS filesystem system)
-if(Boost_FOUND)
-	include_directories(${Boost_INCLUDE_DIRS})
-	target_link_libraries(${EXECUTABLE_NAME} ${Boost_LIBRARIES})
-endif()
-
 # Detect and add SFML
 find_package(SFML 2 REQUIRED graphics window system)
 if(SFML_FOUND)
 	include_directories(${SFML_INCLUDE_DIR})
-	target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES})
+	target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
 endif()
 
 # Detect and add OpenGL

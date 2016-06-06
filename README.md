@@ -39,18 +39,17 @@ Choose a tool from the toolbar at the top of the editor window to get started.
 
 Extract the Windows release archive to your desired installation folder and open `NecroEdit.exe`.
 
-If `vcruntime140.dll` or any other DLL file is missing, install
-[Visual C++ 2015 Redistributable](https://www.microsoft.com/en-us/download/details.aspx?id=48145) restart your computer
-and try running NecroEdit again.
-
-If the DLL problem persists, please report the bug by opening an issue on this GitHub repository.
+If any errors messages show up when you start NecroEdit, please report the bug by opening an issue on NecroEdit's issue
+tracker on GitHub.
 
 ### Linux
 
 **[Download the latest release here!](https://github.com/Marukyu/NecroEdit/releases)**
 
-[SFML 2.3](http://sfml-dev.org), [Boost](http://boost.org) System and Boost Filesystem are required. You can install
-them using your distribution's package manager or from the repsective project websites.
+[SFML 2.3](http://sfml-dev.org) is required. You can install it using your distribution's package manager or from the
+library's website.
+
+Additionally, a recent version (GLIBCXX >= 3.4.18) of the GNU C++ runtime library (libstdc++6) is required.
 
 Extract the Linux release archive to your desired installation path and run `./NecroEdit` in the installation path.
 
@@ -67,8 +66,7 @@ cmake .
 make
 ```
 
-Development versions of [SFML 2.3](http://sfml-dev.org) (and its dependencies), [Boost](http://boost.org) System and
-Boost Filesystem must be installed.
+Library and header files for [SFML 2.3](http://sfml-dev.org) (and its dependencies) must be installed.
 
 A C++11 compliant compiler such as GCC 4.8 or Visual Studio 2015 is required to build NecroEdit.
 

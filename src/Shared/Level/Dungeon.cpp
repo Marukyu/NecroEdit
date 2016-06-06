@@ -1,4 +1,3 @@
-#include <boost/filesystem/path.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <Shared/External/PugiXML/pugixml.hpp>
 #include <Shared/Level/Dungeon.hpp>
@@ -131,7 +130,7 @@ bool Dungeon::loadFromXML(const std::string& filename)
 
 	playerCharacter = characterID;
 
-	name = dungeonNode.attribute("name").as_string(boost::filesystem::path(filename).stem().string().c_str());
+	name = dungeonNode.attribute("name").as_string(removeFileExtension(removeFilePath(filename)).c_str());
 
 	std::size_t levelCount = dungeonNode.attribute("numLevels").as_uint(0);
 
@@ -232,7 +231,7 @@ bool Dungeon::saveToXML(const std::string& filename) const
 
 	// Add dungeon attributes.
 	dungeonNode.append_attribute("character").set_value(playerCharacter + (isStartItemsEnabled() ? 0 : 1000));
-	dungeonNode.append_attribute("name").set_value(boost::filesystem::path(filename).stem().string().c_str());
+	dungeonNode.append_attribute("name").set_value(removeFileExtension(removeFilePath(filename)).c_str());
 	dungeonNode.append_attribute("numLevels").set_value((int) levels.size());
 
 	// Add levels.

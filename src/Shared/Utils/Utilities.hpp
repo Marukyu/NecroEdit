@@ -27,29 +27,18 @@ std::vector<std::string> extractSection(const std::vector<std::string> & vector,
 
 std::string getTimeString();
 
-bool listFiles(std::string dir, std::vector<std::string> & vec, bool recursive = false, bool sorted = true, std::string prefix = "");
-bool listDirectories(std::string dir, std::vector<std::string> & vec, bool recursive = false, bool sorted = true, std::string prefix = "");
-
+// TODO: Place these functions in separate FileSystem namespace / header file.
 bool fileExists(const std::string & filename);
-bool directoryExists(const std::string & filename);
 
-void createDirectoryStructure(const std::string & path);
+bool createDirectory(const std::string & path);
+bool createDirectoryStructure(const std::string & path);
 
 std::string readFile(const std::string & filename);
 
-/**
- * Tries to acquire a lock to a file. Creates the file if it does not exist yet.
- * Returns true if the lock succeeded, false otherwise.
- */
-bool tryLockFile(const std::string & filename);
-
-/**
- * Tries to unlock a file. Does nothing on non-existant or unlocked file.
- */
-void unlockFile(const std::string & filename);
-
 std::string getFileExtension(const std::string & filename);
 std::string removeFileExtension(const std::string & filename);
+std::string getFilePath(const std::string & filename);
+std::string removeFilePath(const std::string & filename);
 
 template <typename T>
 sf::Rect<T> moveRect(sf::Rect<T> rect, sf::Vector2<T> off)

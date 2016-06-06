@@ -12,7 +12,7 @@
 #include <iostream>
 
 #ifdef WOS_WINDOWS
-#	include <Windows.h>
+#	include <windows.h>
 #	undef MessageBox
 #endif
 

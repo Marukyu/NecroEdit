@@ -1,14 +1,29 @@
-#include <ctime>
+#include <SFML/Config.hpp>
+#include <SFML/System/Time.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <Shared/Utils/MiscMath.hpp>
+#include <Shared/Utils/OSDetect.hpp>
+#include <Shared/Utils/StrNumCon.hpp>
+#include <Shared/Utils/Utilities.hpp>
+#include <algorithm>
 #include <cctype>
+#include <cstddef>
+#include <cstdlib>
+#include <ctime>
 #include <fstream>
+#include <functional>
+#include <iostream>
+#include <iterator>
 #include <sstream>
-#include <boost/filesystem.hpp>
+#include <string>
+#include <vector>
 
-#include "Shared/Utils/Utilities.hpp"
-#include "Shared/Utils/StrNumCon.hpp"
-#include "Shared/Utils/MiscMath.hpp"
-
-namespace bfs = boost::filesystem;
+#ifdef WOS_LINUX
+#	include <sys/stat.h>
+#	include <sys/types.h>
+#elif defined WOS_WINDOWS
+#	include <shlobj.h>
+#endif
 
 std::string toUppercase(std::string str)
 {
@@ -53,7 +68,7 @@ bool equalsIgnoreCase(const std::string & a, const std::string & b)
 }
 
 void splitString(const std::string & str, const std::string & separator, std::vector<std::string> & results,
-		bool ignoreEmpty)
+	bool ignoreEmpty)
 {
 	results.clear();
 
@@ -175,120 +190,53 @@ std::string getTimeString()
 	return ret;
 }
 
-bool listFiles(std::string dir, std::vector<std::string> & vec, bool recursive, bool sorted, std::string prefix)
-{
-	try
-	{
-		bfs::path lspath(dir);
-		if (!bfs::is_directory(lspath))
-			return false;
-
-		std::vector<bfs::path> path_vec;
-		std::copy(bfs::directory_iterator(lspath), bfs::directory_iterator(), std::back_inserter(path_vec));
-
-		if (sorted)
-			std::sort(path_vec.begin(), path_vec.end());
-
-		for (std::vector<bfs::path>::const_iterator it(path_vec.begin()); it != path_vec.end(); it++)
-		{
-			if (bfs::is_regular_file(*it))
-				vec.push_back((bfs::path(prefix) / it->filename()).string());
-
-			if (bfs::is_directory(*it) && recursive)
-				listFiles((dir / it->filename()).string(), vec, true, sorted,
-					(bfs::path(prefix) / it->filename()).string());
-		}
-		return true;
-	} catch (std::exception & e)
-	{
-		return false;
-	}
-}
-
-bool listDirectories(std::string dir, std::vector<std::string> & vec, bool recursive, bool sorted, std::string prefix)
-{
-	try
-	{
-		bfs::path lspath(dir);
-		if (!bfs::is_directory(lspath))
-			return false;
-
-		std::vector<bfs::path> path_vec;
-		std::copy(bfs::directory_iterator(lspath), bfs::directory_iterator(), std::back_inserter(path_vec));
-
-		if (sorted)
-			std::sort(path_vec.begin(), path_vec.end());
-
-		for (std::vector<bfs::path>::const_iterator it(path_vec.begin()); it != path_vec.end(); it++)
-		{
-			if (bfs::is_directory(*it))
-			{
-				vec.push_back((bfs::path(prefix) / it->filename()).string());
-				if (recursive)
-					listDirectories((dir / it->filename()).string(), vec, true, sorted,
-						(bfs::path(prefix) / it->filename()).string());
-			}
-		}
-		return true;
-	} catch (std::exception & e)
-	{
-		return false;
-	}
-}
-
-static bool fileExistsImpl(const bfs::path & path, unsigned int maxLinks)
-{
-	if (maxLinks == 0)
-	{
-		return false;
-	}
-	
-	if (bfs::is_regular_file(path))
-	{
-		return true;
-	}
-	
-	if (bfs::is_symlink(path))
-	{
-		return fileExistsImpl(bfs::read_symlink(path), maxLinks - 1);
-	}
-	
-	return false;
-}
-
-static bool directoryExistsImpl(const bfs::path & path, unsigned int maxLinks)
-{
-	if (maxLinks == 0)
-	{
-		return false;
-	}
-	
-	if (bfs::is_directory(path))
-	{
-		return true;
-	}
-	
-	if (bfs::is_symlink(path))
-	{
-		return fileExistsImpl(bfs::read_symlink(path), maxLinks - 1);
-	}
-	
-	return false;
-}
-
 bool fileExists(const std::string & filename)
 {
-	return fileExistsImpl(filename, 50);
+	std::ifstream file;
+	file.open(filename);
+	return file.good();
 }
 
-bool directoryExists(const std::string & filename)
+bool createDirectory(const std::string & path)
 {
-	return directoryExistsImpl(filename, 50);
+#if defined WOS_LINUX || defined WOS_OSX
+
+	// Check what kind of file is at the specified path.
+	struct stat st;
+	if (stat(path.c_str(), &st) == 0 && S_ISDIR(st.st_mode))
+	{
+		// If it is a directory, simply return true.
+		return true;
+	}
+
+	// Try to create directory, return false if any error occured.
+	return mkdir(path.c_str(), S_IRWXU) == 0;
+
+#elif defined WOS_WINDOWS
+
+	// Create directory recursively.
+	return SHCreateDirectoryEx(NULL, path.c_str(), NULL) == ERROR_SUCCESS;
+
+#endif
 }
 
-void createDirectoryStructure(const std::string & path)
+bool createDirectoryStructure(const std::string & path)
 {
-	bfs::create_directories(path);
+#if defined WOS_LINUX || defined WOS_OSX
+
+	std::size_t index = path.find_first_of('/');
+
+	while (index != std::string::npos)
+	{
+		// Create parent directories.
+		createDirectory(path.substr(0, index));
+		index = path.find_first_of('/', index + 1);
+	}
+
+#endif
+
+	// On Windows, createDirectory already works recursively.
+	return createDirectory(path);
 }
 
 std::string readFile(const std::string & filename)
@@ -310,13 +258,17 @@ std::string getFileExtension(const std::string & filename)
 {
 	// no dot found in file name.
 	if (filename.find_last_of(".") == std::string::npos)
+	{
 		return "";
+	}
 
 	std::string extension = filename.substr(filename.find_last_of("."));
 
 	// last dot found within path name, so no dot in file name.
 	if (extension.find_first_of("/\\") != std::string::npos)
+	{
 		return "";
+	}
 
 	return extension;
 }
@@ -324,16 +276,44 @@ std::string removeFileExtension(const std::string & filename)
 {
 	// no dot found in file name.
 	if (filename.find_last_of(".") == std::string::npos)
+	{
 		return filename;
+	}
 
 	std::string filestem = filename.substr(0, filename.find_last_of("."));
 	std::string extension = filename.substr(filename.find_last_of("."));
 
 	// last dot found within path name, no dot to be removed in file name.
 	if (extension.find_first_of("/\\") != std::string::npos)
+	{
 		return filename;
+	}
 
 	return filestem;
+}
+
+std::string getFilePath(const std::string& filename)
+{
+	std::size_t index = filename.find_last_of("/\\");
+
+	if (index == std::string::npos)
+	{
+		return "";
+	}
+
+	return filename.substr(0, index);
+}
+
+std::string removeFilePath(const std::string& filename)
+{
+	std::size_t index = filename.find_last_of("/\\");
+
+	if (index == std::string::npos)
+	{
+		return filename;
+	}
+
+	return filename.substr(index + 1);
 }
 
 std::string getByteSizeString(sf::Uint64 bytes)
@@ -386,7 +366,7 @@ std::string getSfTimeString(sf::Time time)
 	else if (time < sf::seconds(60 * 60))
 	{
 		str << int(time.asSeconds()) / 60 << ":" << fillStringWithChar(cNtoS(int(time.asSeconds()) % 60), '0', 2) << "."
-				<< fillStringWithChar(cNtoS((time.asMilliseconds() / 10) % 100), '0', 2);
+			<< fillStringWithChar(cNtoS((time.asMilliseconds() / 10) % 100), '0', 2);
 	}
 	else
 	{
@@ -401,13 +381,13 @@ std::string getRoughSfTimeString(sf::Time time)
 	if (time > sf::seconds(60 * 60))
 	{
 		return cNtoS(int(time.asSeconds() / 60 / 60)) + ":"
-				+ fillStringWithChar(cNtoS(int(time.asSeconds() / 60) % 60), '0', 2) + ":"
-				+ fillStringWithChar(cNtoS(int(time.asSeconds()) % 60), '0', 2);
+			+ fillStringWithChar(cNtoS(int(time.asSeconds() / 60) % 60), '0', 2) + ":"
+			+ fillStringWithChar(cNtoS(int(time.asSeconds()) % 60), '0', 2);
 	}
 	else
 	{
 		return cNtoS(int(time.asSeconds() / 60) % 60) + ":"
-				+ fillStringWithChar(cNtoS(int(time.asSeconds()) % 60), '0', 2);
+			+ fillStringWithChar(cNtoS(int(time.asSeconds()) % 60), '0', 2);
 	}
 }
 
