@@ -82,6 +82,7 @@ const Brush& ObjectTool::getPrimaryBrush() const
 
 const Brush& ObjectTool::getSecondaryBrush() const
 {
+	secondaryBrush.setObject(settingsPanel->getSelectedObject());
 	secondaryBrush.setObjectMode(settingsPanel->getSecondaryMode());
 	return secondaryBrush;
 }
