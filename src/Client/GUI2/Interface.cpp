@@ -145,7 +145,7 @@ void Interface::process()
 		switch (event.type)
 		{
 		case sf::Event::Closed:
-			myWindow.close();
+			onClose();
 			break;
 
 		case sf::Event::GainedFocus:
@@ -205,6 +205,11 @@ void Interface::onProcess(const WidgetEvents & events)
 void Interface::onRender()
 {
 
+}
+
+void Interface::onClose()
+{
+	closeWindow();
 }
 
 Ptr<Interface::RootContainer> Interface::RootContainer::make()

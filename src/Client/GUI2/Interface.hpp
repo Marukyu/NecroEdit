@@ -85,6 +85,8 @@ private:
 	// called after rendering, but before myWindow.display(). use draw().
 	virtual void onRender();
 
+	// called when the window is about to close. default behavior is to call closeWindow().
+	virtual void onClose();
 
 	// container subclass with an interface onProcess() callback.
 	class RootContainer : public Container

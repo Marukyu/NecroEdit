@@ -112,6 +112,11 @@ Tool * NEWindow::getTool() const
 	return editor->getTool();
 }
 
+void NEWindow::requestClose()
+{
+	closeConfirmMessage->show();
+}
+
 void NEWindow::initWindow()
 {
 	setCaption("NecroEdit");
@@ -249,8 +254,14 @@ void NEWindow::initFileDialogs()
 
 	newConfirmMessage = gui2::MessageBox::make("Are you sure you want to create a new dungeon?\n"
 		"All unsaved changes will be lost.", "Confirmation", { "Yes", "No" });
+
+	closeConfirmMessage = gui2::MessageBox::make("Are you sure you want to quit NecroEdit?\n"
+		"All unsaved changes will be lost.", "Confirmation", { "Yes", "No" });
+
 	errorMessage = gui2::MessageBox::make("", "NecroEdit", { "OK" });
+
 	add(newConfirmMessage);
+	add(closeConfirmMessage);
 	add(errorMessage);
 }
 
@@ -418,6 +429,11 @@ void NEWindow::onProcessWindow(const gui2::WidgetEvents& events)
 		{
 			dungeon->removeLevel(dungeon->getLevelCount() - 1);
 		}
+	}
+
+	if (closeConfirmMessage->wasClosed() && closeConfirmMessage->getClickedButton() == 0)
+	{
+		close();
 	}
 
 	if (events.heldInputs.contains(sf::Keyboard::LControl) && events.pressedInputs.contains(sf::Keyboard::S))

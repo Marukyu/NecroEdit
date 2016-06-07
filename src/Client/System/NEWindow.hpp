@@ -40,6 +40,8 @@ public:
 	void setToolByName(const std::string & toolName);
 	Tool * getTool() const;
 
+	void requestClose();
+
 private:
 
 	struct ToolbarButton
@@ -115,6 +117,7 @@ private:
 
 	gui2::Ptr<gui2::MessageBox> newConfirmMessage;
 	gui2::Ptr<gui2::MessageBox> errorMessage;
+	gui2::Ptr<gui2::MessageBox> closeConfirmMessage;
 };
 
 #endif

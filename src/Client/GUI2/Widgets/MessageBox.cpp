@@ -40,6 +40,9 @@ void MessageBox::show()
 	}
 
 	setVisible(true);
+	sendToFront();
+	acquireFocus();
+
 	invalidateVertices();
 }
 
