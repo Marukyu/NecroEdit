@@ -11,7 +11,6 @@
 * Object properties when placing (position, type, enemy beat delay, chest content, etc.)
 
 ### TODO
-* *Fix save action (currently aliased to "save as")*
 * *Remember game directory choice*
 * Selection tool
 * Picking for brush tools (select tile hovered by mouse cursor)
