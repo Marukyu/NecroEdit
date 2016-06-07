@@ -49,6 +49,8 @@ public:
 	void setTool(Tool * tool);
 	Tool * getTool() const;
 
+	void resetCamera();
+
 	bool isVertexRenderable() const override;
 
 private:

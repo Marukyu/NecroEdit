@@ -182,6 +182,7 @@ file_new,43,New Dungeon
 file_open,44,Open Dungeon...
 file_save,45,Save Dungeon
 file_save_as,46,Save Dungeon As...
+reset_camera,97,Reset Camera
 
 [Tools]
 

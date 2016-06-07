@@ -2,13 +2,14 @@
 #define SRC_CLIENT_EDITOR_LEVELPANEL_HPP_
 
 #include <Client/GUI2/GUI.hpp>
-#include <Client/GUI2/Panels/BorderPanel.hpp>
-#include <Client/GUI2/Panels/GridPanel.hpp>
 #include <Client/GUI2/Widgets/Button.hpp>
 #include <Client/GUI2/Widgets/Dropdown.hpp>
+#include <Client/GUI2/Widgets/MessageBox.hpp>
 #include <Client/GUI2/Widgets/Slider.hpp>
 #include <Client/GUI2/Widgets/Text.hpp>
 #include <cstddef>
+#include <map>
+#include <string>
 #include <vector>
 
 class Dungeon;
@@ -26,7 +27,10 @@ public:
 	 * Factory function.
 	 */
 	static gui2::Ptr<LevelPanel> make();
-	
+
+	void setMessageBoxTarget(gui2::Container * target);
+	gui2::Container * getMessageBoxTarget() const;
+
 	void setSongs(std::map<int, std::string> songs);
 	void setBosses(std::map<int, std::string> bosses);
 
@@ -44,6 +48,7 @@ public:
 	bool wasChanged();
 
 	LevelPanel();
+	virtual ~LevelPanel();
 
 protected:
 
@@ -67,7 +72,7 @@ private:
 	bool isAnyLevelSelected;
 	std::size_t selectedLevel;
 	bool wasLevelChanged;
-	
+
 	std::vector<int> songIDs;
 	std::vector<int> bossIDs;
 
@@ -86,6 +91,9 @@ private:
 
 	gui2::Ptr<gui2::Dropdown> dropdownMusic;
 	gui2::Ptr<gui2::Dropdown> dropdownBoss;
+
+	gui2::Container * messageBoxTarget;
+	gui2::Ptr<gui2::MessageBox> deleteConfirmMessage;
 };
 
 #endif

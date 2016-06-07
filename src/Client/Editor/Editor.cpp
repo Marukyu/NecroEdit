@@ -68,6 +68,14 @@ Tool * Editor::getTool() const
 	return tool;
 }
 
+void Editor::resetCamera()
+{
+	float tileSize = TileAppearanceManager::TILE_SIZE;
+	viewCenter = getLevel() != nullptr ? sf::Vector2f(getLevel()->getPlayerSpawnPoint()) * tileSize : sf::Vector2f();
+	zoomFactor = 1;
+	zoomVelocity = 0;
+}
+
 bool Editor::isVertexRenderable() const
 {
 	return false;

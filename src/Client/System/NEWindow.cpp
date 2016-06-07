@@ -3,9 +3,9 @@
 #include <Client/GUI2/Application.hpp>
 #include <Client/GUI2/Container.hpp>
 #include <Client/GUI2/Interface.hpp>
-#include <Client/GUI2/Panels/BorderPanel.hpp>
 #include <Client/GUI2/Widgets/Gradient.hpp>
 #include <Client/GUI2/Widgets/Separator.hpp>
+#include <Client/GUI2/Widgets/Window.hpp>
 #include <Client/LevelRenderer/ObjectAppearance.hpp>
 #include <Client/LevelRenderer/TileAppearance.hpp>
 #include <Client/System/NEApplication.hpp>
@@ -15,9 +15,7 @@
 #include <Shared/Level/Dungeon.hpp>
 #include <Shared/Level/Level.hpp>
 #include <Shared/Utils/MakeUnique.hpp>
-#include <Shared/Utils/MessageBox.hpp>
 #include <Shared/Utils/NamedFactory.hpp>
-#include <Shared/Utils/OSDetect.hpp>
 #include <Shared/Utils/StrNumCon.hpp>
 #include <Shared/Utils/Utilities.hpp>
 #include <algorithm>
@@ -171,6 +169,7 @@ void NEWindow::initPanels()
 	mainPanel->add(toolPanelContainer, gui2::BorderPanel::Left, 200);
 
 	levelPanel = LevelPanel::make();
+	levelPanel->setMessageBoxTarget(this);
 	mainPanel->add(levelPanel, gui2::BorderPanel::Right, 150);
 }
 
@@ -201,7 +200,7 @@ void NEWindow::initToolbar()
 }
 
 void NEWindow::initToolbarButtons(std::string configSection, std::vector<ToolbarButton>& targetVector,
-		gui2::Ptr<gui2::BorderPanel> targetPanel)
+	gui2::Ptr<gui2::BorderPanel> targetPanel)
 {
 	std::vector<std::string> actions = extractSection(splitString(editorConfig, "\n"), configSection);
 
@@ -228,12 +227,12 @@ void NEWindow::initToolbarButtons(std::string configSection, std::vector<Toolbar
 
 void NEWindow::initFileDialogs()
 {
-	#ifdef WOS_OSX
-		// On OSX, ressources and dungeons aren't in the same folder, use relative path to get to the dungeons
-		std::string dungeonsFolder = gameDirectory + "/../../../dungeons/";
-	#else
-		std::string dungeonsFolder = gameDirectory + "/dungeons/";
-	#endif
+#ifdef WOS_OSX
+	// On OSX, ressources and dungeons aren't in the same folder, use relative path to get to the dungeons
+	std::string dungeonsFolder = gameDirectory + "/../../../dungeons/";
+#else
+	std::string dungeonsFolder = gameDirectory + "/dungeons/";
+#endif
 
 	// Create dungeons folder if it does not exist yet
 	createDirectoryStructure(dungeonsFolder);
@@ -247,6 +246,12 @@ void NEWindow::initFileDialogs()
 	saveDialog.setDefaultPath(dungeonsFolder);
 	saveDialog.setFilterPatterns( { "*.xml" });
 	saveDialog.setFilterDescription("NecroDancer Dungeon XML");
+
+	newConfirmMessage = gui2::MessageBox::make("Are you sure you want to create a new dungeon?\n"
+		"All unsaved changes will be lost.", "Confirmation", { "Yes", "No" });
+	errorMessage = gui2::MessageBox::make("", "NecroEdit", { "OK" });
+	add(newConfirmMessage);
+	add(errorMessage);
 }
 
 void NEWindow::initEditor()
@@ -267,19 +272,19 @@ std::map<int, std::string> NEWindow::generateEnumMap(const std::string& configSe
 {
 	std::vector<std::string> enumList = extractSection(splitString(editorConfig, "\n"), configSection);
 	std::map<int, std::string> enumMap;
-	
+
 	for (const auto & entry : enumList)
 	{
 		std::vector<std::string> entryData = splitString(entry, ",");
-		
+
 		if (entryData.size() < 2)
 		{
 			continue;
 		}
-		
+
 		enumMap[cStoI(entryData[0])] = entryData[1];
 	}
-	
+
 	return std::move(enumMap);
 }
 
@@ -333,19 +338,23 @@ void NEWindow::onProcessWindow(const gui2::WidgetEvents& events)
 		{
 			if (actionButtons[i].actionName == "file_new")
 			{
-				switchToLevel(nullptr);
-				while (dungeon->getLevelCount() != 0)
-				{
-					dungeon->removeLevel(dungeon->getLevelCount() - 1);
-				}
+				newDungeon();
 			}
 			else if (actionButtons[i].actionName == "file_open")
 			{
-				openDialog.showDialog(FileChooser::OpenFile);
+				openDungeon();
 			}
-			else if (actionButtons[i].actionName == "file_save" || actionButtons[i].actionName == "file_save_as")
+			else if (actionButtons[i].actionName == "file_save")
 			{
-				saveDialog.showDialog(FileChooser::SaveFile);
+				saveDungeon();
+			}
+			else if (actionButtons[i].actionName == "file_save_as")
+			{
+				saveDungeonAs();
+			}
+			else if (actionButtons[i].actionName == "reset_camera")
+			{
+				editor->resetCamera();
 			}
 		}
 	}
@@ -364,43 +373,56 @@ void NEWindow::onProcessWindow(const gui2::WidgetEvents& events)
 
 	if (openDialog.isDone())
 	{
+		editor->resetCamera();
 		switchToLevel(nullptr);
 
-		if (!dungeon->loadFromXML(openDialog.getSelectedFile()))
-		{
-			// TODO: Use SFML GUI for message box to avoid freezing main window (implement gui2::MessageBox).
-			MessageBox loadError("Failed to load dungeon (file may be corrupted).", "NecroEdit", MessageBox::Error,
-				MessageBox::Ok);
-			loadError.show();
-		}
+		setCurrentDungeon(openDialog.getSelectedFile());
+		openDialog.clear();
 
-		// Select first non-boss level to show in editor.
-		for (std::size_t levelID = 0; levelID < dungeon->getLevelCount(); ++levelID)
+		if (dungeon->loadFromXML(getCurrentDungeon()))
 		{
-			Level & level = dungeon->getLevel(levelID);
-
-			if (!level.isBoss())
+			// Select first non-boss level to show in editor.
+			for (std::size_t levelID = 0; levelID < dungeon->getLevelCount(); ++levelID)
 			{
-				levelPanel->updateDungeon();
-				levelPanel->setSelectedLevel(levelID);
-				switchToLevel(&level);
+				Level & level = dungeon->getLevel(levelID);
+
+				if (!level.isBoss())
+				{
+					levelPanel->updateDungeon();
+					levelPanel->setSelectedLevel(levelID);
+					switchToLevel(&level);
+				}
 			}
 		}
-
-		openDialog.clear();
+		else
+		{
+			setCurrentDungeon("");
+			errorMessage->setMessage("Failed to load dungeon (file may be corrupted).");
+			errorMessage->show();
+		}
 	}
 
 	if (saveDialog.isDone())
 	{
-		if (!dungeon->saveToXML(saveDialog.getSelectedFile()))
-		{
-			// TODO: Use SFML GUI for message box to avoid freezing main window (implement gui2::MessageBox).
-			MessageBox loadError("Failed to save dungeon (file may be in use).", "NecroEdit", MessageBox::Error,
-				MessageBox::Ok);
-			loadError.show();
-		}
-
+		setCurrentDungeon(saveDialog.getSelectedFile());
 		saveDialog.clear();
+		saveDungeon();
+	}
+
+	if (newConfirmMessage->wasClosed() && newConfirmMessage->getClickedButton() == 0)
+	{
+		editor->resetCamera();
+		setCurrentDungeon("");
+		switchToLevel(nullptr);
+		while (dungeon->getLevelCount() != 0)
+		{
+			dungeon->removeLevel(dungeon->getLevelCount() - 1);
+		}
+	}
+
+	if (events.heldInputs.contains(sf::Keyboard::LControl) && events.pressedInputs.contains(sf::Keyboard::S))
+	{
+		saveDungeon();
 	}
 }
 
@@ -425,4 +447,42 @@ void NEWindow::switchToLevel(Level* level)
 	{
 		getTool()->setEditorData(editorData);
 	}
+}
+
+void NEWindow::setCurrentDungeon(std::string currentDungeon)
+{
+	currentDungeonFile = std::move(currentDungeon);
+}
+
+const std::string & NEWindow::getCurrentDungeon() const
+{
+	return currentDungeonFile;
+}
+
+void NEWindow::newDungeon()
+{
+	newConfirmMessage->show();
+}
+
+void NEWindow::openDungeon()
+{
+	openDialog.showDialog(FileChooser::OpenFile);
+}
+
+void NEWindow::saveDungeon()
+{
+	if (getCurrentDungeon().empty())
+	{
+		saveDungeonAs();
+	}
+	else if (!dungeon->saveToXML(getCurrentDungeon()))
+	{
+		errorMessage->setMessage("Failed to save dungeon (file may be in use).");
+		errorMessage->show();
+	}
+}
+
+void NEWindow::saveDungeonAs()
+{
+	saveDialog.showDialog(FileChooser::SaveFile);
 }

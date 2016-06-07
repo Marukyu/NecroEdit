@@ -5,9 +5,10 @@
 #include <Client/Editor/LevelPanel.hpp>
 #include <Client/Editor/Tool.hpp>
 #include <Client/GUI2/GUI.hpp>
+#include <Client/GUI2/Panels/BorderPanel.hpp>
 #include <Client/GUI2/Panels/GridPanel.hpp>
 #include <Client/GUI2/Widgets/Button.hpp>
-#include <Client/GUI2/Widgets/Window.hpp>
+#include <Client/GUI2/Widgets/MessageBox.hpp>
 #include <Shared/Level/Tile.hpp>
 #include <Shared/Utils/FileChooser.hpp>
 #include <map>
@@ -58,15 +59,23 @@ private:
 	void initLevel();
 
 	void initToolbarButtons(std::string configSection, std::vector<ToolbarButton> & targetVector,
-			gui2::Ptr<gui2::BorderPanel> targetPanel);
-	
+		gui2::Ptr<gui2::BorderPanel> targetPanel);
+
 	std::map<int, std::string> generateEnumMap(const std::string & section) const;
 
 	void updateTilePanels();
 
 	void onProcessWindow(const gui2::WidgetEvents & events) override;
-	
+
 	void switchToLevel(Level * level);
+
+	void setCurrentDungeon(std::string currentDungeon);
+	const std::string & getCurrentDungeon() const;
+
+	void newDungeon();
+	void openDungeon();
+	void saveDungeon();
+	void saveDungeonAs();
 
 	NEApplication * getParentApplication() const;
 
@@ -75,7 +84,7 @@ private:
 	std::string gameDirectory;
 	std::string gameDataDirectory;
 	std::string editorConfig;
-	
+
 	float viewMultiplier;
 
 	std::map<std::string, std::unique_ptr<Tool> > tools;
@@ -87,7 +96,7 @@ private:
 	std::vector<ToolbarButton> toolButtons;
 
 	gui2::Ptr<gui2::GridPanel> toolPanelContainer;
-	
+
 	gui2::Ptr<LevelPanel> levelPanel;
 
 	gui2::Ptr<Editor> editor;
@@ -98,9 +107,14 @@ private:
 	std::unique_ptr<TileAppearanceManager> tileAppearance;
 	std::unique_ptr<ObjectAppearanceManager> objectAppearance;
 	std::unique_ptr<Dungeon> dungeon;
-	
+
 	FileChooser openDialog;
 	FileChooser saveDialog;
+
+	std::string currentDungeonFile;
+
+	gui2::Ptr<gui2::MessageBox> newConfirmMessage;
+	gui2::Ptr<gui2::MessageBox> errorMessage;
 };
 
 #endif

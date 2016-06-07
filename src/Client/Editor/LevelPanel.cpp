@@ -1,11 +1,17 @@
 #include <Client/Editor/LevelPanel.hpp>
+#include <Client/GUI2/Internal/WidgetEvents.hpp>
+#include <Client/GUI2/Panels/BorderPanel.hpp>
+#include <Client/GUI2/Panels/GridPanel.hpp>
 #include <Client/GUI2/Widgets/Gradient.hpp>
+#include <Client/GUI2/Widgets/Menu.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <Shared/Level/Dungeon.hpp>
 #include <Shared/Level/Level.hpp>
 #include <Shared/Utils/StrNumCon.hpp>
+#include <algorithm>
+#include <cmath>
+#include <iterator>
 #include <memory>
-#include <string>
 
 static constexpr float LEVEL_LIST_ENTRY_HEIGHT = 20.f;
 static constexpr float SLIDER_WIDTH = 16.f;
@@ -18,12 +24,21 @@ gui2::Ptr<LevelPanel> LevelPanel::make()
 }
 
 LevelPanel::LevelPanel() :
-		dungeon(nullptr),
-		isAnyLevelSelected(false),
-		selectedLevel(0),
-		wasLevelChanged(false),
-		scrollVelocity(0.f)
+	dungeon(nullptr),
+	isAnyLevelSelected(false),
+	selectedLevel(0),
+	wasLevelChanged(false),
+	scrollVelocity(0.f),
+	messageBoxTarget(nullptr)
 {
+}
+
+LevelPanel::~LevelPanel()
+{
+	if (deleteConfirmMessage->getParent())
+	{
+		deleteConfirmMessage->getParent()->remove(deleteConfirmMessage);
+	}
 }
 
 void LevelPanel::init()
@@ -74,6 +89,33 @@ void LevelPanel::init()
 	mainPanelContainer->add(mainPanel);
 
 	add(mainPanelContainer);
+
+	deleteConfirmMessage = gui2::MessageBox::make("Are you sure you want to delete this level?", "Confirmation", {
+		"Yes",
+		"No" });
+	setMessageBoxTarget(this);
+}
+
+void LevelPanel::setMessageBoxTarget(gui2::Container* target)
+{
+	if (messageBoxTarget != target)
+	{
+		messageBoxTarget = target;
+
+		if (target == nullptr)
+		{
+			add(deleteConfirmMessage);
+		}
+		else
+		{
+			target->add(deleteConfirmMessage);
+		}
+	}
+}
+
+gui2::Container* LevelPanel::getMessageBoxTarget() const
+{
+	return messageBoxTarget;
 }
 
 void LevelPanel::setSongs(std::map<int, std::string> songs)
@@ -353,6 +395,14 @@ void LevelPanel::onProcessContainer(gui2::WidgetEvents& events)
 		}
 
 		if (buttonRemoveLevel->isClicked())
+		{
+			if (hasSelectedLevel())
+			{
+				deleteConfirmMessage->show();
+			}
+		}
+
+		if (deleteConfirmMessage->wasClosed() && deleteConfirmMessage->getClickedButton() == 0)
 		{
 			if (hasSelectedLevel())
 			{
