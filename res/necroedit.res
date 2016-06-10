@@ -189,7 +189,7 @@ reset_camera,97,Reset Camera
 # Tool buttons for the toolbar.
 # Format: Tool,IconEntry,Label
 
-select_rect,82,Rectangular Selection
+#select_rect,82,Rectangular Selection
 place_tile,91,Place Tiles
 place_enemy,93,Place Enemies
 place_item,95,Place Items
