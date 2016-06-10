@@ -151,7 +151,7 @@ bool Dungeon::loadFromXML(const std::string& filename)
 
 		Level & level = getLevel(levelID);
 
-		level.setBoss(levelNode.attribute("boss").as_int(-1));
+		level.setBoss(levelNode.attribute("bossNum").as_int(-1));
 		level.setMusic(levelNode.attribute("music").as_int(0));
 
 		// Load tiles.
