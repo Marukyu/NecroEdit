@@ -134,7 +134,7 @@ bool ObjectAppearanceManager::loadEnemies(const pugi::xml_document& doc, const s
 		EnemyAppearance enemy;
 
 		// Get enemy name, fall back to node name if enemy name is nonexistent.
-		enemy.name = node.attribute("name").as_string(capitalize(node.name()).c_str());
+		enemy.name = node.attribute("friendlyName").as_string(capitalize(node.name()).c_str());
 
 		// Get XML node containing sprite information.
 		pugi::xml_node spritesheetNode = node.child("spritesheet");
