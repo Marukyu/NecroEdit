@@ -73,6 +73,11 @@ gui2::Ptr<gui2::Widget> ObjectTool::getSettingsPanel() const
 	return settingsPanel;
 }
 
+std::string ObjectTool::getTooltip() const
+{
+	return settingsPanel->getTooltip();
+}
+
 const Brush& ObjectTool::getPrimaryBrush() const
 {
 	primaryBrush.setObject(settingsPanel->getSelectedObject());

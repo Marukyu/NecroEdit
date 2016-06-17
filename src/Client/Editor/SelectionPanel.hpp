@@ -11,6 +11,7 @@
 #include <cstddef>
 #include <functional>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace sf
@@ -51,6 +52,9 @@ public:
 	ID getSelection() const;
 	bool hasSelection() const;
 
+	ID getHoveredItem() const;
+	bool hasHoveredItem() const;
+
 	void setMapper(Mapper mapper, std::size_t itemCount);
 	const Mapper & getMapper() const;
 	std::size_t getItemCount() const;
@@ -62,15 +66,15 @@ public:
 	const sf::Texture * getTexture() const;
 
 	void update();
-	
+
 	bool wasChanged();
 
 	SelectionPanel();
 
 	bool isVertexRenderable() const override;
-	
+
 protected:
-	
+
 	virtual void init() override;
 
 private:
@@ -78,7 +82,7 @@ private:
 	void onProcess(const gui2::WidgetEvents & events) override;
 	void onDraw(sf::RenderTarget & target, sf::RenderStates states) const;
 	void onResize() override;
-	
+
 	void onMouseDown(sf::Vector2f pos, Input button) override;
 
 	std::size_t getRowCount() const;
@@ -86,6 +90,8 @@ private:
 
 	sf::FloatRect getItemRect(ID item) const;
 	sf::FloatRect getShiftedItemRect(ID item) const;
+	sf::FloatRect getClickableItemRect(ID item) const;
+	std::pair<bool, ID> getItemAtPosition(sf::Vector2f pos) const;
 
 	Mapper mapper;
 
@@ -93,12 +99,14 @@ private:
 
 	bool wasSelectionChanged;
 	bool selectionExists;
-	std::size_t selection;
+	ID selection;
+	bool hoveredItemExists;
+	ID hoveredItem;
 	std::size_t itemCount;
 	sf::Vector2f itemSize;
 
 	std::vector<sf::Vertex> vertices;
-	
+
 	gui2::Ptr<gui2::Slider> slider;
 	float scrollVelocity;
 };

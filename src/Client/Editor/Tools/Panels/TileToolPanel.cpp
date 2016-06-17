@@ -43,6 +43,11 @@ const Tile& TileToolPanel::getSelectedTile() const
 	return selectedTile;
 }
 
+std::string TileToolPanel::getTooltip() const
+{
+	return hoveredTile.exists() ? tileAppearance->getTileName(hoveredTile) : "";
+}
+
 void TileToolPanel::init()
 {
 	gui2::BorderPanel::init();
@@ -140,6 +145,22 @@ void TileToolPanel::updateSelectedTile()
 	}
 }
 
+void TileToolPanel::updateHoveredTile()
+{
+	if (floorPanel->hasHoveredItem())
+	{
+		hoveredTile = floors[floorPanel->getHoveredItem()];
+	}
+	else if (wallPanel->hasHoveredItem())
+	{
+		hoveredTile = walls[wallPanel->getHoveredItem()];
+	}
+	else
+	{
+		hoveredTile = Tile();
+	}
+}
+
 void TileToolPanel::onProcessContainer(gui2::WidgetEvents& events)
 {
 	if (floorPanel->wasChanged())
@@ -183,4 +204,6 @@ void TileToolPanel::onProcessContainer(gui2::WidgetEvents& events)
 		baseTile.setCracked(tileCrackCheckbox->isChecked());
 		updateSelectors();
 	}
+
+	updateHoveredTile();
 }

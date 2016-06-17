@@ -51,6 +51,11 @@ Brush::ObjectMode ObjectToolPanel::getSecondaryMode() const
 	return static_cast<Brush::ObjectMode>(secondaryModeMenu->getSelection());
 }
 
+std::string ObjectToolPanel::getTooltip() const
+{
+	return hoveredObject.getType() != Object::Type::None ? objectAppearance->getObjectName(hoveredObject) : "";
+}
+
 void ObjectToolPanel::init()
 {
 	gui2::Container::init();
@@ -115,6 +120,15 @@ void ObjectToolPanel::onProcessContainer(gui2::WidgetEvents& events)
 			propertyPanel->setObject(nullptr);
 			propertyPanel->update();
 		}
+	}
+
+	if (selectionPanel->hasHoveredItem())
+	{
+		hoveredObject = Object(objects[selectionPanel->getHoveredItem()]);
+	}
+	else
+	{
+		hoveredObject.setType(Object::Type::None);
 	}
 }
 

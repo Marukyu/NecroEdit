@@ -27,8 +27,13 @@ public:
 	 */
 	const Tile & getSelectedTile() const;
 
+	/**
+	 * Returns the name of the currently hovered tile.
+	 */
+	std::string getTooltip() const;
+
 protected:
-	
+
 	virtual void init() override;
 
 private:
@@ -37,6 +42,7 @@ private:
 	void updateTileProperties(std::vector<Tile> & tileList, const Tile & sourceTile);
 	void updateSelectors();
 	void updateSelectedTile();
+	void updateHoveredTile();
 
 	void onProcessContainer(gui2::WidgetEvents & events) override;
 
@@ -45,6 +51,7 @@ private:
 	std::vector<Tile> floors;
 	std::vector<Tile> walls;
 	Tile selectedTile;
+	Tile hoveredTile;
 	Tile baseTile;
 
 	gui2::Ptr<SelectionPanel> floorPanel;

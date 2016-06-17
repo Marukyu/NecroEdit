@@ -68,6 +68,11 @@ Tool * Editor::getTool() const
 	return tool;
 }
 
+sf::Vector2i Editor::getMousePositionTile() const
+{
+	return lastMousePosition;
+}
+
 void Editor::resetCamera()
 {
 	float tileSize = TileAppearanceManager::TILE_SIZE;

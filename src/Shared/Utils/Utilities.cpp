@@ -145,6 +145,33 @@ std::vector<std::string> splitString(const std::string & str, const std::string 
 	return std::move(results);
 }
 
+std::string joinStrings(const std::vector<std::string>& strs, const std::string& separator, bool ignoreEmpty)
+{
+	std::string result;
+	bool skipSeparator = true;
+
+	for (const auto & str : strs)
+	{
+		if (ignoreEmpty && str.empty())
+		{
+			continue;
+		}
+
+		if (skipSeparator)
+		{
+			skipSeparator = false;
+		}
+		else
+		{
+			result += separator;
+		}
+
+		result += str;
+	}
+
+	return result;
+}
+
 std::vector<std::string> extractSection(const std::vector<std::string>& vector, const std::string& sectionName)
 {
 	std::vector<std::string> section;

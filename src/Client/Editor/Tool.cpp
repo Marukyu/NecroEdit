@@ -46,6 +46,11 @@ void Tool::onDrawPreview(sf::RenderTarget& target, sf::RenderStates states, sf::
 {
 }
 
+std::string Tool::getTooltip() const
+{
+	return "";
+}
+
 gui2::Ptr<gui2::Widget> Tool::getSettingsPanel() const
 {
 	return nullptr;

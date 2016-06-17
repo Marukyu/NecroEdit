@@ -6,6 +6,7 @@
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <Shared/Utils/NamedFactory.hpp>
+#include <string>
 
 class Level;
 class ObjectAppearanceManager;
@@ -90,6 +91,11 @@ public:
 	virtual void onDrawPreview(sf::RenderTarget & target, sf::RenderStates states, sf::Vector2i cursorPosition);
 
 	/**
+	 * Called every frame to determine the current tooltip/status string to be displayed in the editor.
+	 */
+	virtual std::string getTooltip() const;
+
+	/**
 	 * Returns the settings panel associated with this tool. This has to be a consistent and unique instance; the return
 	 * value must not change between calls.
 	 */
@@ -104,7 +110,7 @@ public:
 	 * Returns the editor information given to this tool.
 	 */
 	const EditorData & getEditorData() const;
-	
+
 	/**
 	 * Initializes the Named Factory of tools, if it is not initialized yet.
 	 */

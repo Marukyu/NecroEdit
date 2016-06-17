@@ -18,7 +18,7 @@ class ObjectToolPanel : public gui2::Container
 public:
 
 	static gui2::Ptr<ObjectToolPanel> make(std::vector<Object> objects,
-			const ObjectAppearanceManager & objectAppearance);
+		const ObjectAppearanceManager & objectAppearance);
 
 	ObjectToolPanel(std::vector<Object> objects, const ObjectAppearanceManager & objectAppearance);
 	virtual ~ObjectToolPanel();
@@ -38,8 +38,13 @@ public:
 	 */
 	Brush::ObjectMode getSecondaryMode() const;
 
+	/**
+	 * Returns the name of the currently hovered tile.
+	 */
+	std::string getTooltip() const;
+
 protected:
-	
+
 	virtual void init() override;
 
 private:
@@ -52,6 +57,7 @@ private:
 
 	std::vector<Object> objects;
 	Object selectedObject;
+	Object hoveredObject;
 
 	gui2::Ptr<gui2::Dropdown> primaryModeMenu;
 	gui2::Ptr<gui2::Dropdown> secondaryModeMenu;

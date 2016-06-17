@@ -44,6 +44,11 @@ gui2::Ptr<gui2::Widget> TileTool::getSettingsPanel() const
 	return settingsPanel;
 }
 
+std::string TileTool::getTooltip() const
+{
+	return settingsPanel->getTooltip();
+}
+
 const Brush& TileTool::getPrimaryBrush() const
 {
 	primaryBrush.setTile(settingsPanel->getSelectedTile());

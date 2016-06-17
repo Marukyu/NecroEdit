@@ -18,6 +18,11 @@ public:
 
 	virtual gui2::Ptr<gui2::Widget> getSettingsPanel() const override;
 
+	/**
+	 * Returns the tooltip for this object tool.
+	 */
+	virtual std::string getTooltip() const override;
+
 protected:
 
 	virtual const Brush & getPrimaryBrush() const override;

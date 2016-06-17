@@ -27,18 +27,20 @@ gui2::Ptr<SelectionPanel> SelectionPanel::make()
 }
 
 SelectionPanel::SelectionPanel() :
-		mapper([](ID id)
-		{
-			static ItemEntry invalidEntry;
-			return invalidEntry;
-		}),
-		texture(nullptr),
-		wasSelectionChanged(false),
-		selectionExists(false),
-		selection(0),
-		itemCount(0),
-		itemSize(24.f, 24.f),
-		scrollVelocity(0)
+	mapper([](ID id)
+	{
+		static ItemEntry invalidEntry;
+		return invalidEntry;
+	}),
+	texture(nullptr),
+	wasSelectionChanged(false),
+	selectionExists(false),
+	selection(0),
+	hoveredItemExists(false),
+	hoveredItem(0),
+	itemCount(0),
+	itemSize(24.f, 24.f),
+	scrollVelocity(0)
 {
 }
 
@@ -69,6 +71,16 @@ SelectionPanel::ID SelectionPanel::getSelection() const
 bool SelectionPanel::hasSelection() const
 {
 	return selectionExists;
+}
+
+SelectionPanel::ID SelectionPanel::getHoveredItem() const
+{
+	return hoveredItem;
+}
+
+bool SelectionPanel::hasHoveredItem() const
+{
+	return hoveredItemExists;
 }
 
 void SelectionPanel::setMapper(Mapper mapper, std::size_t itemCount)
@@ -130,6 +142,16 @@ void SelectionPanel::update()
 	}
 }
 
+bool SelectionPanel::wasChanged()
+{
+	if (wasSelectionChanged)
+	{
+		wasSelectionChanged = false;
+		return true;
+	}
+	return false;
+}
+
 bool SelectionPanel::isVertexRenderable() const
 {
 	return false;
@@ -143,7 +165,7 @@ void SelectionPanel::onProcess(const gui2::WidgetEvents& events)
 		{
 			scrollVelocity -= events.mouseWheelDelta * 5;
 		}
-		
+
 		if (std::abs(scrollVelocity) > 0.0001f)
 		{
 			float newSliderValue = slider->getValue() + scrollVelocity;
@@ -161,14 +183,26 @@ void SelectionPanel::onProcess(const gui2::WidgetEvents& events)
 			scrollVelocity *= 0.75f;
 		}
 	}
+
+	if (isMouseOver())
+	{
+		std::pair<bool, ID> itemAtMousePos = getItemAtPosition(events.mousePosition);
+
+		hoveredItemExists = itemAtMousePos.first;
+		hoveredItem = itemAtMousePos.second;
+	}
+	else
+	{
+		hoveredItemExists = false;
+	}
 }
 
 void SelectionPanel::onDraw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	states.transform *= getTransform();
-	
+
 	sf::Transform origTransform = states.transform;
-	
+
 	states.transform.translate(0, -slider->getValue());
 	states.texture = this->texture;
 
@@ -222,17 +256,12 @@ void SelectionPanel::onMouseDown(sf::Vector2f pos, Input button)
 {
 	if (button == sf::Mouse::Left)
 	{
-		for (ID i = 0; i < getItemCount(); ++i)
+		auto itemAtPos = getItemAtPosition(pos);
+
+		if (itemAtPos.first && (!hasSelection() || getSelection() != itemAtPos.second))
 		{
-			if (getShiftedItemRect(i).contains(pos))
-			{
-				if (!hasSelection() || getSelection() != i)
-				{
-					setSelection(i);
-					wasSelectionChanged = true;
-				}
-				break;
-			}
+			setSelection(itemAtPos.second);
+			wasSelectionChanged = true;
 		}
 	}
 }
@@ -253,12 +282,25 @@ sf::FloatRect SelectionPanel::getShiftedItemRect(ID item) const
 	return moveRect(getItemRect(item), sf::Vector2f(0, -slider->getValue()));
 }
 
-bool SelectionPanel::wasChanged()
+sf::FloatRect SelectionPanel::getClickableItemRect(ID item) const
 {
-	if (wasSelectionChanged)
+	return expandRect(getShiftedItemRect(item), sf::Vector2f(MARGIN / 2, MARGIN / 2));
+}
+
+std::pair<bool, SelectionPanel::ID> SelectionPanel::getItemAtPosition(sf::Vector2f pos) const
+{
+	// Optimization.
+	if (hasHoveredItem() && getClickableItemRect(getHoveredItem()).contains(pos))
 	{
-		wasSelectionChanged = false;
-		return true;
+		return std::make_pair(true, getHoveredItem());
 	}
-	return false;
+
+	for (ID i = 0; i < getItemCount(); ++i)
+	{
+		if (getClickableItemRect(i).contains(pos))
+		{
+			return std::make_pair(true, i);
+		}
+	}
+	return std::make_pair(false, 0);
 }

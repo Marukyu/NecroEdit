@@ -17,6 +17,7 @@ bool equalsIgnoreCase(const std::string & a, const std::string & b);
 
 //void splitString(const std::string & str, const std::string & separator, std::vector<std::string> & results, bool ignoreEmpty = false);
 std::vector<std::string> splitString(const std::string & str, const std::string & separator, bool ignoreEmpty = false);
+std::string joinStrings(const std::vector<std::string> & strs, const std::string & separator, bool ignoreEmpty = false);
 
 /**
  * Extracts a specific section from an ini-like vector.

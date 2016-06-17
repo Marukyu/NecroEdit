@@ -9,6 +9,7 @@
 #include <Client/GUI2/Panels/GridPanel.hpp>
 #include <Client/GUI2/Widgets/Button.hpp>
 #include <Client/GUI2/Widgets/MessageBox.hpp>
+#include <Client/GUI2/Widgets/Text.hpp>
 #include <Shared/Level/Tile.hpp>
 #include <Shared/Utils/FileChooser.hpp>
 #include <map>
@@ -66,6 +67,7 @@ private:
 	std::map<int, std::string> generateEnumMap(const std::string & section) const;
 
 	void updateTilePanels();
+	void updateTooltip();
 
 	void onProcessWindow(const gui2::WidgetEvents & events) override;
 
@@ -102,6 +104,8 @@ private:
 	gui2::Ptr<LevelPanel> levelPanel;
 
 	gui2::Ptr<Editor> editor;
+
+	gui2::Ptr<gui2::Text> tooltip;
 
 	std::vector<Tile> floors, walls;
 

@@ -49,6 +49,8 @@ public:
 	void setTool(Tool * tool);
 	Tool * getTool() const;
 
+	sf::Vector2i getMousePositionTile() const;
+
 	void resetCamera();
 
 	bool isVertexRenderable() const override;

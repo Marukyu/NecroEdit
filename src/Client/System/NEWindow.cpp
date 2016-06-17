@@ -176,6 +176,11 @@ void NEWindow::initPanels()
 	levelPanel = LevelPanel::make();
 	levelPanel->setMessageBoxTarget(this);
 	mainPanel->add(levelPanel, gui2::BorderPanel::Right, 150);
+
+	tooltip = gui2::Text::make();
+	tooltip->setZPosition(10);
+	tooltip->setEnabled(false);
+	add(tooltip);
 }
 
 void NEWindow::initLevelPanel()
@@ -328,6 +333,29 @@ void NEWindow::updateTilePanels()
 	}
 }
 
+void NEWindow::updateTooltip()
+{
+	float tooltipMargin = 10.f;
+	tooltip->setTextAlignment(gui2::Text::AlignBottomLeft);
+	tooltip->setPosition(mainPanel->getSideSize(gui2::BorderPanel::Left) + tooltipMargin,
+		getSize().y / getViewMultiplier() - tooltipMargin);
+
+	std::vector<std::string> tooltips;
+
+	if (getTool())
+	{
+		tooltips.push_back(getTool()->getTooltip());
+	}
+
+	if (editor->isMouseOver())
+	{
+		tooltips.push_back("x: " + cNtoS(editor->getMousePositionTile().x));
+		tooltips.push_back("y: " + cNtoS(editor->getMousePositionTile().y));
+	}
+
+	tooltip->setText(joinStrings(tooltips, "\n", true));
+}
+
 void NEWindow::onProcessWindow(const gui2::WidgetEvents& events)
 {
 	for (std::size_t i = 0; i < toolButtons.size(); ++i)
@@ -440,6 +468,8 @@ void NEWindow::onProcessWindow(const gui2::WidgetEvents& events)
 	{
 		saveDungeon();
 	}
+
+	updateTooltip();
 }
 
 NEApplication* NEWindow::getParentApplication() const
