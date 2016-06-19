@@ -4,6 +4,7 @@
 #include "Shared/Utils/Utilities.hpp"
 
 #include <algorithm>
+#include <cmath>
 
 namespace gui2
 {
