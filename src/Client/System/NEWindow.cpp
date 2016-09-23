@@ -457,6 +457,10 @@ void NEWindow::onProcessWindow(const gui2::WidgetEvents& events)
 		{
 			dungeon->removeLevel(dungeon->getLevelCount() - 1);
 		}
+		dungeon->insertLevel(0);
+		levelPanel->setSelectedLevel(0);
+		switchToLevel(&dungeon->getLevel(0));
+		levelPanel->updateDungeon();
 	}
 
 	if (closeConfirmMessage->wasClosed() && closeConfirmMessage->getClickedButton() == 0)
