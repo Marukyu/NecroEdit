@@ -385,6 +385,10 @@ std::vector<sf::Vertex> ObjectAppearanceManager::getObjectVertices(const Object&
 			return vertices;
 		}
 
+		// The in-game editor gives some objects a subtype of -1 to indicate that the property is unused.
+		// This workaround allows traps to remain visible in NecroEdit even after saving dungeons with them in-game.
+		variant = std::max(0, variant);
+
 		try
 		{
 			spriteData.nodeID = it->second.nodeIDs.at(variant);
