@@ -396,7 +396,7 @@ void Widget::process(const WidgetEvents & events)
 	myIsClicked = 0;
 
 	// set mouse-over flag. mouse position is already pre-transformed.
-	bool mouseOver = events.mouseFocus && checkMouseover(events.mousePosition);
+	bool mouseOver = events.mouseFocus && checkMouseover(events.mousePosition) && isEnabled();
 
 	if (myIsMouseOver != mouseOver)
 	{

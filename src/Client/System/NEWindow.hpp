@@ -8,6 +8,7 @@
 #include <Client/GUI2/Panels/BorderPanel.hpp>
 #include <Client/GUI2/Panels/GridPanel.hpp>
 #include <Client/GUI2/Widgets/Button.hpp>
+#include <Client/GUI2/Widgets/Gradient.hpp>
 #include <Client/GUI2/Widgets/MessageBox.hpp>
 #include <Client/GUI2/Widgets/Text.hpp>
 #include <Shared/Level/Tile.hpp>
@@ -106,6 +107,7 @@ private:
 	gui2::Ptr<Editor> editor;
 
 	gui2::Ptr<gui2::Text> tooltip;
+	gui2::Ptr<gui2::Gradient> tooltipBackground;
 
 	std::vector<Tile> floors, walls;
 

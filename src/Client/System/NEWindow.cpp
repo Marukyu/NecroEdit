@@ -179,8 +179,15 @@ void NEWindow::initPanels()
 
 	tooltip = gui2::Text::make();
 	tooltip->setZPosition(10);
-	tooltip->setEnabled(false);
+	tooltip->setTextColor(sf::Color(255, 255, 255, 220));
 	add(tooltip);
+
+	tooltipBackground = gui2::Gradient::make();
+	tooltipBackground->setColorA(sf::Color(0, 0, 0, 150));
+	tooltipBackground->setColorB(sf::Color(0, 0, 0, 150));
+	tooltipBackground->setZPosition(9);
+	tooltipBackground->setEnabled(false);
+	add(tooltipBackground);
 }
 
 void NEWindow::initLevelPanel()
@@ -336,6 +343,7 @@ void NEWindow::updateTilePanels()
 void NEWindow::updateTooltip()
 {
 	float tooltipMargin = 10.f;
+	sf::Vector2f tooltipExpansion(3.f, 3.f);
 	tooltip->setTextAlignment(gui2::Text::AlignBottomLeft);
 	tooltip->setPosition(mainPanel->getSideSize(gui2::BorderPanel::Left) + tooltipMargin,
 		getSize().y / getViewMultiplier() - tooltipMargin);
@@ -354,6 +362,8 @@ void NEWindow::updateTooltip()
 	}
 
 	tooltip->setText(joinStrings(tooltips, "\n", true));
+	tooltipBackground->setVisible(!tooltip->getText().empty());
+	tooltipBackground->setRect(moveRect(expandRect(tooltip->getTextRect(), tooltipExpansion), tooltip->getPosition()));
 }
 
 void NEWindow::onProcessWindow(const gui2::WidgetEvents& events)
