@@ -126,9 +126,12 @@ void Editor::onProcess(const gui2::WidgetEvents& events)
 {
 	sf::Vector2f mousePos = convertMousePosition(events.mousePosition);
 
-	bool leftMouseDown = isMouseDown(sf::Mouse::Left);
-	bool rightMouseDown = isMouseDown(sf::Mouse::Right);
-	bool middleMouseDown = isMouseDown(sf::Mouse::Middle);
+	bool shiftLeftMouseDown = isMouseDown(sf::Mouse::Left) && events.isShiftPressed();
+	bool ctrlLeftMouseDown = isMouseDown(sf::Mouse::Left) && events.isControlPressed();
+
+	bool leftMouseDown = isMouseDown(sf::Mouse::Left) && !shiftLeftMouseDown && !ctrlLeftMouseDown;
+	bool rightMouseDown = isMouseDown(sf::Mouse::Right) || shiftLeftMouseDown;
+	bool middleMouseDown = isMouseDown(sf::Mouse::Middle) || ctrlLeftMouseDown;
 
 	if (middleMouseDown)
 	{
