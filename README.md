@@ -86,7 +86,7 @@ A C++11 compliant compiler such as GCC 4.8 or Visual Studio 2015 is required to 
 
 ## License (MIT License)
 
-Copyright (c) 2016 Marukyu
+Copyright (c) 2016-2017 Marukyu
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
