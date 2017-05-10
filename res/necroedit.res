@@ -18,7 +18,7 @@
 
 # Floors
 
-0,Floor,floor_dirt1,zone2_floorA,zone3_floor,zone3_floorB,zone4_floor:1:27:24:24,boss_floor_A
+0,Floor,floor_dirt1,zone2_floorA,zone3_floor,zone3_floorB,zone4_floor:1:27:24:24,boss_floor_A,zone5_floor
 1,!Floor 2,=0
 2,Stairs,stairs:0:0:24:24
 3,Shop Floor,TEMP_shop_floor
@@ -38,18 +38,19 @@
 17,Ooze,TEMP_floor_magnetic
 18,Lava,floor_lava
 19,!Floor 4,=0
+20,Wire,wire:0:0:24:24:0:0
 
 # Walls
 
-100,Dirt Wall,wall_dirt_crypt,wall_zone2,zone3_wall_dirt_hot,zone3_wall_dirt_cold,zone4_wall_dirt,boss_wall,zone1_wall_dirt_cracked,zone2_wall_dirt_crack,zone3_wall_dirt_hot_crack,zone3_wall_dirt_cold_crack,zone4_wall_dirt_crack
+100,Dirt Wall,wall_dirt_crypt,wall_zone2,zone3_wall_dirt_hot,zone3_wall_dirt_cold,zone4_wall_dirt,boss_wall,zone5_wall_dirt,zone1_wall_dirt_cracked,zone2_wall_dirt_crack,zone3_wall_dirt_hot_crack,zone3_wall_dirt_cold_crack,zone4_wall_dirt_crack,boss_wall,zone5_wall_dirt_crack
 101,!Dirt Wall 2,=100
 102,Level Border,end_of_world
 103,Door,door_front:0:0:24:29:-15:0
-104,Shop Wall,wall_shop_crypt,wall_shop_crypt,wall_shop_crypt,wall_shop_crypt,wall_shop_crypt,wall_shop_crypt,wall_shop_crypt_cracked,wall_shop_crypt_cracked,wall_shop_crypt_cracked,wall_shop_crypt_cracked,wall_shop_crypt_cracked
+104,Shop Wall,wall_shop_crypt,wall_shop_crypt,wall_shop_crypt,wall_shop_crypt,wall_shop_crypt,wall_shop_crypt,wall_shop_crypt,wall_shop_crypt_cracked,wall_shop_crypt_cracked,wall_shop_crypt_cracked,wall_shop_crypt_cracked,wall_shop_crypt_cracked,wall_shop_crypt_cracked,wall_shop_crypt_cracked
 105,Unbreakable Wall,wall_shop_crypt_dark
 106,Locked Door,door_locked_front:0:0:24:32:-15:0
-107,Stone Wall,wall_stone_crypt,zone2_wall_stone,zone3_wall_stone_hot,zone3_wall_stone_cold,zone4_wall_rock_A,boss_wall,zone1_wall_stone_cracked,zone2_wall_stone_crack,zone3_wall_stone_hot_cracked,zone3_wall_stone_cold_cracked,zone4_wall_rock_A_crack
-108,Catacomb Wall,wall_catacomb_crypt1,wall_catacomb_crypt1,wall_catacomb_crypt1,wall_catacomb_crypt1,zone4_wall_catacomb_A,wall_catacomb_crypt1,zone1_catacomb_cracked,zone1_catacomb_cracked,zone1_catacomb_cracked,zone1_catacomb_cracked,zone4_wall_catacomb_A_crack
+107,Stone Wall,wall_stone_crypt,zone2_wall_stone,zone3_wall_stone_hot,zone3_wall_stone_cold,zone4_wall_rock_A,boss_wall,zone5_wall_stone_A,zone1_wall_stone_cracked,zone2_wall_stone_crack,zone3_wall_stone_hot_cracked,zone3_wall_stone_cold_cracked,zone4_wall_rock_A_crack,boss_wall,zone5_wall_stone_crack
+108,Catacomb Wall,wall_catacomb_crypt1,wall_catacomb_crypt1,wall_catacomb_crypt1,wall_catacomb_crypt1,zone4_wall_catacomb_A,wall_catacomb_crypt1,zone5_wall_catacomb,zone1_catacomb_cracked,zone1_catacomb_cracked,zone1_catacomb_cracked,zone1_catacomb_cracked,zone4_wall_catacomb_A_crack,zone1_catacomb_cracked,zone5_wall_catacomb_crack
 109,Boss Wall,boss_wall
 110,!Cracked Shop Wall,wall_shop_crypt_cracked
 111,Metal Door,door_metal_front:0:0:24:29:-15:0
@@ -59,6 +60,7 @@
 115,NecroDancer Speaker 1,necrodancer_stage:72:0:24:61:-36
 116,NecroDancer Speaker 2,necrodancer_stage:96:0:24:61:-36
 117,NecroDancer Speaker 3,necrodancer_stage:120:0:24:61:-36
+118,Wired Door,door_front:0:0:24:29:-15:20
 
 [Traps]
 
@@ -172,6 +174,7 @@ Zone 3 Hot
 Zone 3 Cold
 Zone 4
 Boss
+Zone 5
 
 [Actions]
 

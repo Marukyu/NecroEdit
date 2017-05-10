@@ -17,11 +17,14 @@ public:
 		Zone3Cold,
 		Zone4,
 		Boss,
+		Zone5,
 		Zone1Cracked,
 		Zone2Cracked,
 		Zone3HotCracked,
 		Zone3ColdCracked,
-		Zone4Cracked
+		Zone4Cracked,
+		BossCracked,
+		Zone5Cracked,
 	};
 
 	enum Builtin : ID

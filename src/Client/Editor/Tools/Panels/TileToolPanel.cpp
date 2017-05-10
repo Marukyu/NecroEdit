@@ -63,7 +63,7 @@ void TileToolPanel::init()
 	wallPanel->setItemSize({24, 48});
 	selectorContainer->add(wallPanel);
 
-	std::vector<std::string> zoneNames = { "Zone 1", "Zone 2", "Zone 3 Hot", "Zone 3 Cold", "Zone 4", "Boss" };
+	std::vector<std::string> zoneNames = { "Zone 1", "Zone 2", "Zone 3 Hot", "Zone 3 Cold", "Zone 4", "Boss", "Zone 5" };
 
 	auto zoneButtonContainer = gui2::GridPanel::make(2, (zoneNames.size() + 1) / 2);
 	zoneButtonContainer->setMargin(1.f);
