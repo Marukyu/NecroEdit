@@ -79,6 +79,7 @@
 8,Travel Rune,null,travelrune1:24:0:24:24,travelrune2:24:0:24:24,travelrune3:24:0:24:24,travelrune4:24:0:24:24,travelrune5:24:0:24:24,travelrune6:24:0:24:24,travelrune7:24:0:24:24,travelrune8:24:0:24:24
 9,Bomb Trap,bombtrap:14:0:14:16
 10,Fireball Trap,firetrap:34:0:34:23,null,firetrap:34:0:34:23:flipped
+14,Scatter Trap,scattertrap:14:0:14:16
 
 [Crates]
 
@@ -108,6 +109,9 @@
 10,Shrine of Phasing,shrine_phasing:0:0:35:52
 11,Shrine of Pace,shrine_pace:0:0:35:52
 12,Shrine of Chance,shrine_chance:0:0:35:52
+13,Boss Shrine,shrine_boss:0:0:30:46
+14,Shrine of Pain,shrine_pain:0:0:22:50
+15,Shrine of Uncertainty,shrine_uncertainty:0:0:24:49
 
 [Characters]
 
