@@ -92,7 +92,7 @@ public:
 	/**
 	 * Returns a list of valid values for the "subtype" for the specified object type and object ID.
 	 */
-	std::vector<int> getObjectSubtypeList(Object::Type type, int objectTypeID);
+	std::vector<int> getObjectSubtypeList(Object::Type type, int objectTypeID) const;
 
 	/**
 	 * Returns the list of valid values for the "type" field for items.
@@ -106,8 +106,8 @@ public:
 
 private:
 
-	typedef unsigned int EnemyID;
-	typedef unsigned int ObjectID;
+	typedef int EnemyID;
+	typedef int ObjectID;
 
 	struct EnemyAppearance
 	{

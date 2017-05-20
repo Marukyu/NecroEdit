@@ -1,4 +1,6 @@
+#include <Client/Editor/Tools/Panels/SpawnPointToolPanel.hpp>
 #include <Client/Editor/Tools/SpawnPointTool.hpp>
+#include <Client/GUI2/GUI.hpp>
 #include <Client/LevelRenderer/ObjectAppearance.hpp>
 #include <Client/LevelRenderer/TileAppearance.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -6,6 +8,7 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Vertex.hpp>
+#include <Shared/Level/Dungeon.hpp>
 #include <Shared/Level/Level.hpp>
 #include <Shared/Level/Object.hpp>
 #include <vector>
@@ -19,6 +22,18 @@ SpawnPointTool::SpawnPointTool()
 
 SpawnPointTool::~SpawnPointTool()
 {
+}
+
+void SpawnPointTool::onInit()
+{
+	toolPanel = SpawnPointToolPanel::make(*getEditorData().dungeon, *getEditorData().objectAppearance);
+	onEnable();
+}
+
+void SpawnPointTool::onEnable()
+{
+	toolPanel->setLevel(getEditorData().level);
+	toolPanel->update();
 }
 
 void SpawnPointTool::onMousePress(sf::Vector2i position, MouseButton button)
@@ -43,7 +58,7 @@ void SpawnPointTool::onDrawPreview(sf::RenderTarget& target, sf::RenderStates st
 	Object spawnPointPreview(Object::Type::Internal);
 	spawnPointPreview.setPosition(cursorPosition);
 	spawnPointPreview.setPropertyInt(Object::Property::Type, ObjectAppearanceManager::InternalCharacter);
-	spawnPointPreview.setPropertyInt(Object::Property::Subtype, -1);
+	spawnPointPreview.setPropertyInt(Object::Property::Subtype, getEditorData().dungeon->getPlayerCharacter());
 
 	// Get marker vertices.
 	std::vector<sf::Vertex> vertices = getEditorData().objectAppearance->getObjectVertices(spawnPointPreview);
@@ -69,4 +84,9 @@ void SpawnPointTool::onDrawPreview(sf::RenderTarget& target, sf::RenderStates st
 	// Render marker preview.
 	states.texture = getEditorData().objectAppearance->getTexture();
 	target.draw(vertices.data(), vertices.size(), sf::Triangles, states);
+}
+
+gui2::Ptr<gui2::Widget> SpawnPointTool::getSettingsPanel() const
+{
+	return toolPanel;
 }

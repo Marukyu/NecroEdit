@@ -263,8 +263,8 @@ bool ObjectAppearanceManager::loadTXTObjectsFromSection(const std::string& txtDa
 	AppearanceLoader::CallbackFunction callback = [this,&target](AppearanceLoader::Appearance appearance)
 	{
 		// Forward function call to Manager object.
-			onLoadObject(std::move(appearance), target);
-		};
+		onLoadObject(std::move(appearance), target);
+	};
 
 	// Perform load.
 	return loader.loadAppearance(txtData, section, basePath, callback);
@@ -277,7 +277,7 @@ std::vector<sf::Vertex> ObjectAppearanceManager::getObjectVertices(const Object&
 
 	// Store common appearance data.
 	SpriteData spriteData;
-	
+
 	// Assign object position.
 	spriteData.position = object.getPosition();
 
@@ -328,17 +328,17 @@ std::vector<sf::Vertex> ObjectAppearanceManager::getObjectVertices(const Object&
 			{
 				return vertices;
 			}
-			
+
 			// Generate body vertices.
 			spriteData.nodeID = it->second.nodeIDs[1];
 			std::vector<sf::Vertex> bodyVertices = generateSpriteVertices(spriteData);
 			vertices.insert(vertices.end(), bodyVertices.begin(), bodyVertices.end());
-			
+
 			// Generate head vertices.
 			spriteData.nodeID = it->second.nodeIDs[0];
 			std::vector<sf::Vertex> headVertices = generateSpriteVertices(spriteData);
 			vertices.insert(vertices.end(), headVertices.begin(), headVertices.end());
-			
+
 			// Return vertices directly.
 			return vertices;
 		}
@@ -415,7 +415,7 @@ std::vector<sf::Vertex> ObjectAppearanceManager::getObjectVertices(const Object&
 	{
 		spriteData.offset.y -= 20.f;
 	}
-	
+
 	// Generate vertices from sprite data.
 	vertices = generateSpriteVertices(spriteData);
 
@@ -486,7 +486,19 @@ const std::string& ObjectAppearanceManager::getObjectName(const Object& object) 
 		case Object::Type::Shrine:
 			objectMap = &myShrines;
 			break;
+		case Object::Type::Internal:
+			if (object.getID() == InternalCharacter)
+			{
+				objectMap = &myCharacters;
+				typeProperty = Object::Property::Subtype;
+			}
+			break;
 		default:
+			break;
+		}
+
+		if (objectMap == nullptr)
+		{
 			return invalidName;
 		}
 
@@ -550,7 +562,7 @@ std::vector<int> ObjectAppearanceManager::getObjectIDList(Object::Type type) con
 	}
 }
 
-std::vector<int> ObjectAppearanceManager::getObjectSubtypeList(Object::Type type, int objectTypeID)
+std::vector<int> ObjectAppearanceManager::getObjectSubtypeList(Object::Type type, int objectTypeID) const
 {
 	std::vector<int> subtypeList;
 
@@ -570,8 +582,22 @@ std::vector<int> ObjectAppearanceManager::getObjectSubtypeList(Object::Type type
 	case Object::Type::Shrine:
 		objectMap = &myShrines;
 		break;
+	case Object::Type::Internal:
+		if (objectTypeID == InternalCharacter)
+		{
+			for (const auto & character : myCharacters)
+			{
+				subtypeList.push_back(character.first);
+			}
+			return subtypeList;
+		}
+		break;
 	default:
-		// This is invalid: return empty list.
+		break;
+	}
+
+	if (objectMap == nullptr)
+	{
 		return subtypeList;
 	}
 
@@ -659,7 +685,7 @@ std::vector<sf::Vertex> ObjectAppearanceManager::generateSpriteVertices(SpriteDa
 {
 	// Create vertex array.
 	std::vector<sf::Vertex> vertices;
-	
+
 	// Create vertex and texture rectangles.
 	sf::IntRect texRect = myPacker->getImageRect(spriteData.nodeID);
 	sf::FloatRect vertRect(spriteData.offset.x, spriteData.offset.y, texRect.width, texRect.height);
@@ -698,6 +724,6 @@ std::vector<sf::Vertex> ObjectAppearanceManager::generateSpriteVertices(SpriteDa
 	{
 		vertex.color.a *= spriteData.alpha;
 	}
-	
+
 	return vertices;
 }

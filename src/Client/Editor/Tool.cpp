@@ -11,6 +11,7 @@ Tool::Tool()
 	editorData.tileAppearance = nullptr;
 	editorData.objectAppearance = nullptr;
 	editorData.level = nullptr;
+	editorData.dungeon = nullptr;
 	this->editorData = editorData;
 }
 

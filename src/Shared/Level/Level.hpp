@@ -143,7 +143,7 @@ public:
 			ObjectAdded,
 			ObjectRemoved,
 			ObjectChanged,
-			SpawnPointMoved
+			SpawnPointUpdated
 		};
 
 		Event() :
@@ -226,6 +226,11 @@ public:
 	 * Returns the position at which the player starts in the level.
 	 */
 	sf::Vector2i getPlayerSpawnPoint() const;
+
+	/**
+	 * Notifies all event listeners that the player spawn point was updated in position or appearance.
+	 */
+	void firePlayerSpawnPointUpdate() const;
 
 	/**
 	 * Sets which boss battle should generate in this level. Setting a boss overrides any tiles or objects in the level.

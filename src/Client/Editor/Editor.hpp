@@ -9,8 +9,10 @@
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/System/Vector2.hpp>
-#include <array>
 #include <memory>
+#include <vector>
+
+class Dungeon;
 
 class Level;
 class LevelRenderer;
@@ -36,10 +38,11 @@ public:
 	/**
 	 * Factory function.
 	 */
-	static gui2::Ptr<Editor> make(const TileAppearanceManager & tileAppearance,
+	static gui2::Ptr<Editor> make(Dungeon & dungeon, const TileAppearanceManager & tileAppearance,
 			const ObjectAppearanceManager & objectAppearance);
 
-	Editor(const TileAppearanceManager & tileAppearance, const ObjectAppearanceManager & objectAppearance);
+	Editor(Dungeon & dungeon, const TileAppearanceManager & tileAppearance,
+		const ObjectAppearanceManager & objectAppearance);
 
 	virtual ~Editor();
 
@@ -66,6 +69,7 @@ private:
 
 	void onProcess(const gui2::WidgetEvents & events) override;
 
+	Dungeon * dungeon;
 	Level * level;
 	Tool * tool;
 

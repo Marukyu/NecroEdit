@@ -1,13 +1,14 @@
 #include <Client/LevelRenderer/LevelRenderer.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <Shared/Level/Dungeon.hpp>
 #include <Shared/Level/Tile.hpp>
 #include <algorithm>
-#include <iostream>
 #include <iterator>
 
-LevelRenderer::LevelRenderer(const Level & level, const TileAppearanceManager & tileAppearance,
+LevelRenderer::LevelRenderer(const Dungeon & dungeon, const Level & level, const TileAppearanceManager & tileAppearance,
 		const ObjectAppearanceManager & objectAppearance) :
+		dungeon(&dungeon),
 		level(&level),
 		tileAppearance(&tileAppearance),
 		objectAppearance(&objectAppearance),
@@ -16,7 +17,6 @@ LevelRenderer::LevelRenderer(const Level & level, const TileAppearanceManager & 
 	eventListener = level.acquireEventListener();
 
 	spawnPointVisualizer.setPropertyInt(Object::Property::Type, ObjectAppearanceManager::InternalCharacter);
-	spawnPointVisualizer.setPropertyInt(Object::Property::Subtype, -1);
 
 	for (auto it = level.tilesBegin(); it != level.tilesEnd(); ++it)
 	{
@@ -64,7 +64,7 @@ void LevelRenderer::update()
 			removeObject(event.objectID);
 			break;
 
-		case Level::Event::SpawnPointMoved:
+		case Level::Event::SpawnPointUpdated:
 			updateSpawnPoint();
 			break;
 
@@ -90,9 +90,9 @@ void LevelRenderer::draw(sf::RenderTarget & target, sf::RenderStates states) con
 
 void LevelRenderer::drawTileLayer(TileLayer layer, sf::RenderTarget& target, sf::RenderStates states) const
 {
-	for (std::vector<sf::Vertex> it: tileVertices[layer])
+	for (std::vector<sf::Vertex> vertices : tileVertices[layer])
 	{
-		target.draw(&it[0], it.size(), sf::Triangles, states);
+		target.draw(vertices.data(), vertices.size(), sf::Triangles, states);
 	}
 }
 
@@ -281,5 +281,6 @@ void LevelRenderer::shrinkObjectVertexArray()
 void LevelRenderer::updateSpawnPoint()
 {
 	spawnPointVisualizer.setPosition(level->getPlayerSpawnPoint());
+	spawnPointVisualizer.setPropertyInt(Object::Property::Subtype, dungeon->getPlayerCharacter());
 	spawnPointVertices = objectAppearance->getObjectVertices(spawnPointVisualizer);
 }

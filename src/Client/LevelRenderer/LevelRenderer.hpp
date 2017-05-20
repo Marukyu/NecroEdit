@@ -9,10 +9,13 @@
 #include <SFML/System/Vector2.hpp>
 #include <Shared/Level/Level.hpp>
 #include <Shared/Level/Object.hpp>
+#include <Shared/Level/Tile.hpp>
 #include <Shared/Utils/Event/EventListener.hpp>
 #include <array>
 #include <cstddef>
 #include <vector>
+
+class Dungeon;
 
 namespace sf
 {
@@ -28,7 +31,7 @@ public:
 	/**
 	 * Creates a renderer for the specified level using the provided appearance managers.
 	 */
-	LevelRenderer(const Level & level, const TileAppearanceManager & tileAppearance,
+	LevelRenderer(const Dungeon & dungeon, const Level & level, const TileAppearanceManager & tileAppearance,
 			const ObjectAppearanceManager & objectAppearance);
 
 	virtual ~LevelRenderer();
@@ -113,10 +116,11 @@ private:
 
 	void expandObjectVertexArray(Object::ID objectID);
 	void shrinkObjectVertexArray();
-	
+
 	void updateSpawnPoint();
 
 	const Level * level;
+	const Dungeon * dungeon;
 	const TileAppearanceManager * tileAppearance;
 	const ObjectAppearanceManager * objectAppearance;
 

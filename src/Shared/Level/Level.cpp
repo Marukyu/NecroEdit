@@ -346,15 +346,20 @@ void Level::setPlayerSpawnPoint(sf::Vector2i playerSpawn)
 	{
 		this->playerSpawn = playerSpawn;
 
-		Event event;
-		event.type = Event::SpawnPointMoved;
-		eventManager.push(event);
+		firePlayerSpawnPointUpdate();
 	}
 }
 
 sf::Vector2i Level::getPlayerSpawnPoint() const
 {
 	return playerSpawn;
+}
+
+void Level::firePlayerSpawnPointUpdate() const
+{
+	Event event;
+	event.type = Event::SpawnPointUpdated;
+	eventManager.push(event);
 }
 
 void Level::setBoss(int boss)

@@ -8,6 +8,7 @@
 #include <Shared/Utils/NamedFactory.hpp>
 #include <string>
 
+class Dungeon;
 class Level;
 class ObjectAppearanceManager;
 class TileAppearanceManager;
@@ -31,6 +32,7 @@ public:
 		TileAppearanceManager * tileAppearance;
 		ObjectAppearanceManager * objectAppearance;
 		Level * level;
+		Dungeon * dungeon;
 	};
 
 	/**

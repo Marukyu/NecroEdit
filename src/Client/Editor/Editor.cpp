@@ -5,21 +5,23 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Transform.hpp>
 #include <SFML/Window/Mouse.hpp>
+#include <Shared/Level/Dungeon.hpp>
 #include <Shared/Level/Level.hpp>
 #include <Shared/Utils/MakeUnique.hpp>
 #include <cmath>
 
-gui2::Ptr<Editor> Editor::make(const TileAppearanceManager & tileAppearance,
+gui2::Ptr<Editor> Editor::make(Dungeon & dungeon, const TileAppearanceManager & tileAppearance,
 		const ObjectAppearanceManager & objectAppearance)
 {
-	gui2::Ptr<Editor> widget = std::make_shared<Editor>(tileAppearance, objectAppearance);
+	gui2::Ptr<Editor> widget = std::make_shared<Editor>(dungeon, tileAppearance, objectAppearance);
 	widget->init();
 	return widget;
 }
 
-Editor::Editor(const TileAppearanceManager & tileAppearance, const ObjectAppearanceManager & objectAppearance) :
-		level(0),
-		tool(0),
+Editor::Editor(Dungeon & dungeon, const TileAppearanceManager & tileAppearance, const ObjectAppearanceManager & objectAppearance) :
+		dungeon(&dungeon),
+		level(nullptr),
+		tool(nullptr),
 		tileAppearance(&tileAppearance),
 		objectAppearance(&objectAppearance),
 		levelRenderer(nullptr),
@@ -48,7 +50,7 @@ void Editor::setLevel(Level * level)
 		}
 		else
 		{
-			levelRenderer = makeUnique<LevelRenderer>(*level, *tileAppearance, *objectAppearance);
+			levelRenderer = makeUnique<LevelRenderer>(*dungeon, *level, *tileAppearance, *objectAppearance);
 		}
 	}
 }

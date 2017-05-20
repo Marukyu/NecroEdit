@@ -145,6 +145,7 @@ void NEWindow::initResources()
 
 	editorData.tileAppearance = tileAppearance.get();
 	editorData.objectAppearance = objectAppearance.get();
+	editorData.dungeon = dungeon.get();
 }
 
 void NEWindow::initTools()
@@ -279,12 +280,14 @@ void NEWindow::initFileDialogs()
 
 void NEWindow::initEditor()
 {
-	editor = Editor::make(*tileAppearance, *objectAppearance);
+	editor = Editor::make(*dungeon, *tileAppearance, *objectAppearance);
 	mainPanel->add(editor, gui2::BorderPanel::Center);
 }
 
 void NEWindow::initLevel()
 {
+	dungeon->setPlayerCharacter(0);
+	dungeon->setStartItemsEnabled(true);
 	dungeon->insertLevel(0);
 	levelPanel->updateDungeon();
 	levelPanel->setSelectedLevel(0);
@@ -467,10 +470,7 @@ void NEWindow::onProcessWindow(const gui2::WidgetEvents& events)
 		{
 			dungeon->removeLevel(dungeon->getLevelCount() - 1);
 		}
-		dungeon->insertLevel(0);
-		levelPanel->setSelectedLevel(0);
-		switchToLevel(&dungeon->getLevel(0));
-		levelPanel->updateDungeon();
+		initLevel();
 	}
 
 	if (closeConfirmMessage->wasClosed() && closeConfirmMessage->getClickedButton() == 0)
@@ -505,7 +505,9 @@ void NEWindow::switchToLevel(Level* level)
 
 	if (getTool() != nullptr)
 	{
+		getTool()->onDisable();
 		getTool()->setEditorData(editorData);
+		getTool()->onEnable();
 	}
 }
 

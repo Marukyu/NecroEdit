@@ -91,8 +91,8 @@ void TileToolPanel::init()
 	checkboxContainer->add(tileCrackCheckbox);
 
 	add(selectorContainer, gui2::BorderPanel::Center);
-	add(zoneButtonContainer, gui2::BorderPanel::Bottom, 90.f);
-	add(checkboxContainer, gui2::BorderPanel::Bottom, 30.f);
+	add(zoneButtonContainer, gui2::BorderPanel::Bottom, 100.f);
+	add(checkboxContainer, gui2::BorderPanel::Bottom, 20.f);
 
 	updateSelectors();
 }
