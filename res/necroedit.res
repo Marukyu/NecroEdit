@@ -38,7 +38,7 @@
 17,Ooze,TEMP_floor_magnetic
 18,Lava,floor_lava
 19,!Floor 4,=0
-20,Wire,wire:0:0:24:24:0:0
+20,Wire,wire:360:0:24:24:0:0
 
 # Walls
 
@@ -118,13 +118,15 @@
 0,Cadence,player1_heads:0:0:24:24,player1_armor_body:0:0:24:24
 1,Melody,char1_heads:0:0:24:24,char1_armor_body:0:0:24:24
 2,Aria,char2_heads:0:0:24:24,char2_armor_body:0:0:24:24
-3,Dorian,char3_heads:0:0:24:24,char3_armor_body:0:0:24:24
-4,Eli,char4_heads:0:0:24:24,char4_armor_body:0:0:24:24
+3,Dorian,char3_heads:4:4:24:24,char3_armor_body:4:4:24:24
+4,Eli,char4_heads:4:4:24:24,char4_armor_body:4:4:24:24
 5,Monk,char5_heads:0:0:24:24,char5_armor_body:0:0:24:24
 6,Dove,char6_heads:0:0:24:24,char6_armor_body:0:0:24:24
-7,Coda,char7_heads:0:0:24:24,char7_armor_body:0:0:24:24
+7,Coda,char7_heads:4:6:24:24,char7_armor_body:4:6:24:24
 8,Bolt,char8_heads:0:0:24:24,char8_armor_body:0:0:24:24
 9,Bard,char9_heads:0:0:24:24,char9_armor_body:0:0:24:24
+10,Nocturna,char10_heads:1:3:24:24,char10_armor_body:1:3:24:24
+11,Diamond,char11_heads:0:0:24:24,char11_armor_body:0:0:24:24
 
 [Bosses]
 
@@ -165,6 +167,9 @@
 9,4-1
 10,4-2
 11,4-3
+12,5-1
+13,5-2
+14,5-3
 
 [Zones]
 
