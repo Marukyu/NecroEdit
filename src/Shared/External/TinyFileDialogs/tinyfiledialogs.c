@@ -97,8 +97,8 @@ misrepresented as being the original software.
   #define _WIN32_WINNT 0x0500
  #endif
  #ifndef TINYFD_NOLIB
-  #include <Windows.h>
-  #include <Shlobj.h>
+  #include <windows.h>
+  #include <shlobj.h>
  #endif
  #include <conio.h>
  /*#include <io.h>*/
