@@ -19,6 +19,7 @@ Please see the section *Installation* if you are having issues running NecroEdit
     * Examples: Lava tiles, Golden Lute, Ninja Mask
 * Additional settings for objects
     * Examples: Lord enemies, single choice items, hidden chests
+* Full support for Amplified DLC
 
 ## Controls
 
@@ -82,6 +83,7 @@ A C++11 compliant compiler such as GCC 4.8 or Visual Studio 2015 is required to 
 
 * [Marukyu](https://github.com/Marukyu) (main development of NecroEdit)
 * [Alexis Martin](https://github.com/alexismartin) (OS X compatibility)
+* [Grimy](https://github.com/grimy) (Zone 5 support)
 * [RedMser](https://github.com/RedMser) (fixed a typo in the help message)
 
 ## License (MIT License)
