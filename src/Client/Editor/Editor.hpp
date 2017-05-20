@@ -75,7 +75,7 @@ private:
 	std::unique_ptr<LevelRenderer> levelRenderer;
 
 	sf::RectangleShape tilePreviewRectangle;
-	std::array<sf::Vertex, TileAppearanceManager::VERTEX_COUNT> tilePreviewVertices;
+	std::vector<sf::Vertex> tilePreviewVertices;
 
 	sf::Vector2f viewCenter;
 

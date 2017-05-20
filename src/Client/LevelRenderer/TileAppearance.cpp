@@ -43,12 +43,9 @@ bool TileAppearanceManager::loadTiles(const std::string & tileData, const std::s
 	return loader.loadAppearance(tileData, "Tiles", basePath + "level/", callback);
 }
 
-std::array<sf::Vertex, TileAppearanceManager::VERTEX_COUNT> TileAppearanceManager::getTileVertices(const Tile& tile,
+std::vector<sf::Vertex> TileAppearanceManager::getTileVertices(const Tile& tile,
 		sf::Vector2i position) const
 {
-	// Generate vertex array.
-	std::array<sf::Vertex, VERTEX_COUNT> vertices;
-
 	// Get variant appearance.
 	const TileVariantAppearance * variant = getTileVariant(tile);
 
@@ -56,12 +53,11 @@ std::array<sf::Vertex, TileAppearanceManager::VERTEX_COUNT> TileAppearanceManage
 	if (variant == nullptr)
 	{
 		// Return empty vertices if variant does not exist.
-		return vertices;
+		return {};
 	}
 
-	// Create arrays for upper/lower vertex layers.
-	std::array<sf::Vertex, VERTEX_COUNT_SINGLE> verticesLower;
-	std::array<sf::Vertex, VERTEX_COUNT_SINGLE> verticesUpper;
+	// Vertex vector.
+	std::vector<sf::Vertex> vertices = getSingleTileVertices(*variant, position);
 
 	// Perform multi-layer rendering checks.
 	if (variant->baseTile != Tile::Invalid)
@@ -72,75 +68,28 @@ std::array<sf::Vertex, TileAppearanceManager::VERTEX_COUNT> TileAppearanceManage
 		// Create base tile according to original tile's variant info.
 		baseTile.id = variant->baseTile;
 
-		// Get base tile variant.
-		const TileVariantAppearance * baseVariant = getTileVariant(baseTile);
-
-		// Get vertices for lower layer (base tile, if variant was found).
-		if (baseVariant)
-		{
-			verticesLower = getSingleTileVertices(*baseVariant, position);
-		}
-
-		// Get vertices for upper layer (original tile).
-		verticesUpper = getSingleTileVertices(*variant, position);
-		
 		// Apply opacity to upper layer vertices.
-		for (sf::Vertex & vertex : verticesUpper)
+		for (sf::Vertex & vertex : vertices)
 		{
 			vertex.color.a = variant->opacity;
 		}
+
+		// Get vertices for lower layer (base tile).
+		std::vector<sf::Vertex> baseVertices = getTileVertices(baseTile, position);
+		vertices.insert(vertices.begin(), baseVertices.begin(), baseVertices.end());
 	}
-	else if (tile.hasTorch)
+
+	if (tile.hasTorch)
 	{
 		// The tile has a torch.
 		Tile torchTile(Tile::Torch, Tile::Zone1, false);
 
-		// Get torch tile variant.
-		const TileVariantAppearance * torchVariant = getTileVariant(torchTile);
-
-		// Get vertices for lower layer (original tile).
-		verticesLower = getSingleTileVertices(*variant, position);
-
-		// Get vertices for upper layer (torch pseudo-tile, if variant was found).
-		if (torchVariant)
-		{
-			verticesUpper = getSingleTileVertices(*torchVariant, position);
-		}
-	}
-	else
-	{
-		// No multi-layer rendering required.
-		verticesLower = getSingleTileVertices(*variant, position);
+		// Get vertices for upper layer (torch pseudo-tile).
+		std::vector<sf::Vertex> torchVertices = getTileVertices(torchTile, position);
+		vertices.insert(vertices.end(), torchVertices.begin(), torchVertices.end());
 	}
 	
-	// Merge vertex layers.
-	std::copy(verticesLower.begin(), verticesLower.end(), vertices.begin());
-	std::copy(verticesUpper.begin(), verticesUpper.end(), vertices.begin() + verticesLower.size());
-
 	return vertices;
-}
-
-std::size_t TileAppearanceManager::getTileActualVertexCount(const Tile& tile) const
-{
-	// Get variant appearance.
-	const TileVariantAppearance * variant = getTileVariant(tile);
-
-	// Check if variant exists.
-	if (variant == nullptr)
-	{
-		// No vertices required if variant does not exist.
-		return 0;
-	}
-	
-	// Check if tile has a torch or a base tile.
-	if (tile.hasTorch || variant->baseTile != Tile::Invalid)
-	{
-		// Return full vertex count for both tile layers.
-		return VERTEX_COUNT;
-	}
-	
-	// Return half vertex count for single tile layer.
-	return VERTEX_COUNT_SINGLE;
 }
 
 const TileAppearanceManager::TileVariantAppearance* TileAppearanceManager::getTileVariant(const Tile& tile) const
@@ -174,28 +123,15 @@ const TileAppearanceManager::TileVariantAppearance* TileAppearanceManager::getTi
 	std::size_t varIndex = tile.variant;
 
 	// Reduce tile variant if it is out of bounds.
-	while (varIndex >= appearance.variants.size())
-	{
-		if (varIndex >= Tile::Zone1Cracked)
-		{
-			varIndex -= Tile::Zone1Cracked - Tile::Zone1;
-		}
-		else
-		{
-			varIndex = Tile::Zone1;
-		}
-	}
+	varIndex %= appearance.variants.size();
 
 	// Return pointer to the variant.
 	return &appearance.variants[varIndex];
 }
 
-std::array<sf::Vertex, TileAppearanceManager::VERTEX_COUNT_SINGLE> TileAppearanceManager::getSingleTileVertices(
+std::vector<sf::Vertex> TileAppearanceManager::getSingleTileVertices(
 		const TileVariantAppearance & variant, sf::Vector2i position) const
 {
-	// Generate vertex array.
-	std::array<sf::Vertex, VERTEX_COUNT_SINGLE> vertices;
-
 	// Create vertex and texture rectangles.
 	sf::IntRect texRect = myPacker->getImageRect(variant.nodeID);
 	sf::FloatRect vertRect(0.f, variant.yOffset, texRect.width, texRect.height);
@@ -222,15 +158,15 @@ std::array<sf::Vertex, TileAppearanceManager::VERTEX_COUNT_SINGLE> TileAppearanc
 	tbr += sf::Vector2f(-textureDelta, -textureDelta);
 	tbl += sf::Vector2f( textureDelta, -textureDelta);
 
-	// Add vertices to array.
-	vertices[0] = sf::Vertex(vp + tl, sf::Color::White, ttl);
-	vertices[1] = sf::Vertex(vp + tr, sf::Color::White, ttr);
-	vertices[2] = sf::Vertex(vp + bl, sf::Color::White, tbl);
-	vertices[3] = vertices[1];
-	vertices[4] = vertices[2];
-	vertices[5] = sf::Vertex(vp + br, sf::Color::White, tbr);
-
-	return vertices;
+	// Add vertices to a vector.
+	return {
+		{ vp + tl, sf::Color::White, ttl },
+		{ vp + tr, sf::Color::White, ttr },
+		{ vp + bl, sf::Color::White, tbl },
+		{ vp + tr, sf::Color::White, ttr },
+		{ vp + bl, sf::Color::White, tbl },
+		{ vp + br, sf::Color::White, tbr },
+	};
 }
 
 std::vector<Tile::ID> TileAppearanceManager::getTileIDList() const
@@ -258,20 +194,6 @@ const std::string& TileAppearanceManager::getTileName(const Tile& tile) const
 		}
 	}
 	return it->second.name;
-}
-
-std::size_t TileAppearanceManager::getTileVariantCount(const Tile& tile) const
-{
-	auto it = myTiles.find(tile.id);
-	if (it == myTiles.end())
-	{
-		it = myTiles.find(Tile::Builtin::Invalid);
-		if (it == myTiles.end())
-		{
-			return 0;
-		}
-	}
-	return it->second.variants.size();
 }
 
 const sf::Texture* TileAppearanceManager::getTexture() const

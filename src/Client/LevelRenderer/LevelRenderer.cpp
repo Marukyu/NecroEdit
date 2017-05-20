@@ -90,10 +90,9 @@ void LevelRenderer::draw(sf::RenderTarget & target, sf::RenderStates states) con
 
 void LevelRenderer::drawTileLayer(TileLayer layer, sf::RenderTarget& target, sf::RenderStates states) const
 {
-	if (!tileVertices[layer].empty())
+	for (std::vector<sf::Vertex> it: tileVertices[layer])
 	{
-		target.draw(&tileVertices[layer][0][0], tileVertices[layer].size() * TileAppearanceManager::VERTEX_COUNT,
-			sf::Triangles, states);
+		target.draw(&it[0], it.size(), sf::Triangles, states);
 	}
 }
 

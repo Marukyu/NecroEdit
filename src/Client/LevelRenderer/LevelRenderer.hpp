@@ -43,7 +43,7 @@ private:
 	/**
 	 * Container type for tile vertices.
 	 */
-	typedef std::array<sf::Vertex, TileAppearanceManager::VERTEX_COUNT> TileVertexArray;
+	typedef std::vector<sf::Vertex> TileVertexArray;
 
 	/**
 	 * Enumeration for discrete tile Z-positions/layers.

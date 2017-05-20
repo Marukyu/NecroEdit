@@ -26,13 +26,6 @@ public:
 
 	static constexpr float TILE_SIZE = 24.f;
 
-	/**
-	 * Number of vertices per tile.
-	 * 
-	 * Sufficient to hold 2 rectangles layered on top of each other (for layered rendering, such as torches or doors).
-	 */
-	static constexpr unsigned int VERTEX_COUNT = 12;
-
 	TileAppearanceManager(ITexturePacker * packer);
 
 	/**
@@ -56,12 +49,7 @@ public:
 	/**
 	 * Returns the vertices representing the given tile at the specified position.
 	 */
-	std::array<sf::Vertex, VERTEX_COUNT> getTileVertices(const Tile & tile, sf::Vector2i position) const;
-	
-	/**
-	 * Returns the number of vertices a given tile will actually use out of the fixed-size vertex array.
-	 */
-	std::size_t getTileActualVertexCount(const Tile & tile) const;
+	std::vector<sf::Vertex> getTileVertices(const Tile & tile, sf::Vector2i position) const;
 	
 	/**
 	 * Returns a list of all valid tile IDs.
@@ -74,23 +62,11 @@ public:
 	const std::string & getTileName(const Tile & tile) const;
 	
 	/**
-	 * Returns the number of distinct variants of the specified tile.
-	 */
-	std::size_t getTileVariantCount(const Tile & tile) const;
-
-	/**
 	 * Returns the texture of the texture packer used for loading the tiles into this appearance manager.
 	 */
 	const sf::Texture * getTexture() const;
 
 private:
-
-	/**
-	 * Number of vertices per single tile.
-	 * 
-	 * Does not take into account layering.
-	 */
-	static constexpr unsigned int VERTEX_COUNT_SINGLE = 6;
 
 	struct TileVariantAppearance
 	{
@@ -122,7 +98,7 @@ private:
 	
 	const TileVariantAppearance * getTileVariant(const Tile & tile) const;
 
-	std::array<sf::Vertex, VERTEX_COUNT_SINGLE> getSingleTileVertices(const TileVariantAppearance & variant,
+	std::vector<sf::Vertex> getSingleTileVertices(const TileVariantAppearance & variant,
 			sf::Vector2i position) const;
 
 	void onLoadTile(AppearanceLoader::Appearance appearance);
