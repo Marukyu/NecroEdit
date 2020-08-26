@@ -131,6 +131,9 @@
 9,Bard,char9_heads:0:0:24:24,char9_armor_body:0:0:24:24
 10,Nocturna,char10_heads:1:3:24:24,char10_armor_body:1:3:24:24
 11,Diamond,char11_heads:0:0:24:24,char11_armor_body:0:0:24:24
+12,Mary,char12_heads:0:0:24:24,char12_armor_body:0:0:24:24
+13,Tempo,char13_heads:0:0:24:24,char13_armor_body:0:0:24:24
+#14,Reaper,char14_heads:0:0:24:24,char14_armor_body:0:0:24:24
 
 [Bosses]
 
