@@ -114,12 +114,14 @@ private:
 
 	std::shared_ptr<AbstractMenuModel> myModel;
 
-	bool myIsMenuInvalid;
+	bool myIsMenuInvalid = true;
 
-	int mySelectedItem, myMouseOverItem;
-	float myMinimumWidth;
-	float myMenuWidth;
-	bool myIsVerticalFlipped;
+	int mySelectedItem = -1, myMouseOverItem = -1;
+	float myMinimumWidth = 0.f;
+	float myMenuWidth = 0.f;
+	float myScrollVelocity = 0.f, myScrollPosition = 0.f;
+	float myScrollLimitMin = 0.f, myScrollLimitMax = 0.f;
+	bool myIsVerticalFlipped = false;
 
 };
 

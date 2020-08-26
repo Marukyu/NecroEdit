@@ -1,6 +1,7 @@
 #include "Client/GUI2/Application.hpp"
 #include "Client/GUI2/Widgets/Menu.hpp"
 #include "Shared/Utils/Utilities.hpp"
+#include "Shared/Utils/MiscMath.hpp"
 
 namespace gui2
 {
@@ -174,6 +175,11 @@ void Menu::show(sf::Vector2f pos)
 	else
 		setPosition(pos);
 
+	myScrollVelocity = 0.f;
+	myScrollPosition = 0.f;
+	myScrollLimitMax = std::max(-getPosition().y, 0.f);
+	// TODO: calculate minimum scroll limit
+
 	acquireFocus();
 }
 
@@ -232,8 +238,6 @@ bool Menu::isVerticalFlipped() const
 void Menu::init()
 {
 	setModel(std::make_shared<DefaultMenuModel>());
-	setVerticalFlip(false);
-	myIsMenuInvalid = true;
 	setZPosition(500);
 }
 
@@ -250,6 +254,19 @@ void Menu::onProcess(const WidgetEvents & events)
 	if (isVisible())
 	{
 		updateMenu();
+
+		if (isMouseOver() && events.mouseWheelDelta)
+		{
+			myScrollVelocity += events.mouseWheelDelta * 10.f;
+		}
+
+		if (std::abs(myScrollVelocity) > 0.0001f)
+		{
+			float oldScrollPosition = myScrollPosition;
+			myScrollPosition = clamp(myScrollLimitMin, myScrollPosition + myScrollVelocity, myScrollLimitMax);
+			setPosition(getPosition().x, getPosition().y + myScrollPosition - oldScrollPosition);
+			myScrollVelocity *= 0.75f;
+		}
 
 		int newMouseOverItem = -1;
 
