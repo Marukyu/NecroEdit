@@ -144,18 +144,27 @@
 13,King Conga 2
 14,King Conga 3
 15,King Conga 4
-16,Death Metal 1
-17,Death Metal 2
-18,Death Metal 3
-19,Death Metal 4
-20,Deep Blues 1
-21,Deep Blues 2
-22,Deep Blues 3
-23,Deep Blues 4
-24,Coral Riff 1
-25,Coral Riff 2
-26,Coral Riff 3
-27,Coral Riff 4
+16,King Conga 5
+17,Death Metal 1
+18,Death Metal 2
+19,Death Metal 3
+20,Death Metal 4
+21,Death Metal 5
+22,Deep Blues 1
+23,Deep Blues 2
+24,Deep Blues 3
+25,Deep Blues 4
+26,Deep Blues 5
+27,Coral Riff 1
+28,Coral Riff 2
+29,Coral Riff 3
+30,Coral Riff 4
+31,Coral Riff 5
+32,Fortissimole 1
+33,Fortissimole 2
+34,Fortissimole 3
+35,Fortissimole 4
+36,Fortissimole 5
 
 [Music]
 
